@@ -18,7 +18,7 @@ import MassiveDecks.Strings as Strings exposing (MdString)
 import MassiveDecks.Strings.Languages as Lang
 import MassiveDecks.Util.Html as Html
 import MassiveDecks.Util.Maybe as Maybe
-import Material.Select as Select
+import Ui.Select as Select
 
 
 methods : Id -> Source.ExternalMethods msg
@@ -105,10 +105,13 @@ editor selected shared existing update _ _ =
                                     False
                     in
                     { id = d.id
-                    , icon = Nothing
-                    , primary = [ Html.text d.name ]
+                    , label =
+                        if existing |> List.any matches then
+                            "✓ " ++ d.name
+
+                        else
+                            d.name
                     , secondary = Nothing
-                    , meta = Icon.accept |> Icon.view |> Maybe.justIf (existing |> List.any matches)
                     }
             in
             Html.span [ HtmlA.id "json-against-humanity-editor", HtmlA.class "primary" ]

@@ -1,6 +1,7 @@
 @use "./start/_lobby-browser";
 @use "../cards/_size";
 @use "../_colors";
+@use "../_fonts";
 
 .start {
   font-size: clamp(0.5rem, 3vw, 1rem);
@@ -87,18 +88,29 @@
 
     flex-basis: 30em;
 
-    padding: 0 2em 0 2em;
-    margin: 2em;
-
-    border-left: 0.1em solid colors.$secondary-background;
-    border-right: 0.1em solid colors.$secondary-background;
+    max-width: 30em;
+    padding: 0;
+    margin: 1.5em 1em 1em;
 
     h2 {
       margin: 0;
+      font-family: fonts.$display;
+      font-weight: normal;
+      font-size: 1.75em;
     }
 
-    mwc-button {
-      align-self: flex-end;
+    // The page's main action: big and full width.
+    .ui-button.filled {
+      align-self: stretch;
+      min-height: 3.5rem;
+      margin-top: 0.75rem;
+      font-family: fonts.$display;
+      font-weight: normal;
+      font-size: 1.25rem;
+    }
+
+    .ui-button.outlined {
+      align-self: flex-start;
     }
   }
 
@@ -151,6 +163,7 @@
 
     .logo {
       display: block;
+      text-decoration: none;
       margin: 0.5em;
       padding: 1em;
 
@@ -198,8 +211,9 @@
 
   transition: left 0.25s, top 0.25s;
 
-  background-color: colors.$many-decks;
-  color: #ffffff;
+  background-color: colors.$surface-raised;
+  color: colors.$text;
+  border: 1px solid colors.$line-strong;
 
   > * {
     margin-bottom: 0.5em;

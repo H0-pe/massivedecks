@@ -19,7 +19,7 @@ import MassiveDecks.Util.Html as Html
 import MassiveDecks.Util.Maybe as Maybe
 import MassiveDecks.Util.NeList as NeList
 import MassiveDecks.Util.Order as Order
-import Material.Select as Select
+import Ui.Select as Select
 
 
 methods : Id -> Source.ExternalMethods msg
@@ -110,18 +110,23 @@ editor selected shared existing update _ _ =
                                     False
 
                         secondary =
-                            [ lang |> Maybe.map (\l -> Strings.DeckLanguage { language = l } |> Lang.html shared)
-                            , Strings.DeckAuthor { author = author } |> Lang.html shared |> Just
-                            , translator |> Maybe.map (\t -> Strings.DeckTranslator { translator = t } |> Lang.html shared)
+                            [ lang |> Maybe.map (\l -> Strings.DeckLanguage { language = l } |> Lang.string shared)
+                            , Strings.DeckAuthor { author = author } |> Lang.string shared |> Just
+                            , translator |> Maybe.map (\t -> Strings.DeckTranslator { translator = t } |> Lang.string shared)
                             ]
                                 |> List.filterMap identity
-                                |> List.intersperse (Html.text ", ")
+                                |> String.join ", "
+
+                        added =
+                            if existing |> List.any matches then
+                                "✓ "
+
+                            else
+                                ""
                     in
                     { id = id
-                    , icon = Nothing
-                    , primary = [ Html.text name ]
+                    , label = added ++ name
                     , secondary = Just secondary
-                    , meta = Icon.accept |> Icon.view |> Maybe.justIf (existing |> List.any matches)
                     }
             in
             Html.div [ HtmlA.class "primary" ]

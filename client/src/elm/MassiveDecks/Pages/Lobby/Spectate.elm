@@ -27,7 +27,7 @@ import MassiveDecks.Pages.Start.Route as Start
 import MassiveDecks.Strings as Strings
 import MassiveDecks.Strings.Languages as Lang
 import MassiveDecks.User as User
-import Material.IconButton as IconButton
+import Ui.IconButton as IconButton
 import QRCode
 import Url exposing (Url)
 

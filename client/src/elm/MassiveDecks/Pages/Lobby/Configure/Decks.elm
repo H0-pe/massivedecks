@@ -32,7 +32,7 @@ import MassiveDecks.Util.Html as Html
 import MassiveDecks.Util.Maybe as Maybe
 import MassiveDecks.Util.NeList exposing (NeList(..))
 import MassiveDecks.Util.Result as Result
-import Material.IconButton as IconButton
+import Ui.IconButton as IconButton
 import Paper.Tooltip as Tooltip
 import Svg.Attributes as SvgA
 

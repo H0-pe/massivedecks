@@ -151,7 +151,7 @@ player =
 
 info : Icon WithoutId
 info =
-    Icon.info
+    Icon.circleInfo
 
 
 bug : Icon WithoutId

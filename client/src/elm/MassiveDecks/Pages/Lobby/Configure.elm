@@ -56,9 +56,9 @@ import MassiveDecks.User as User exposing (User)
 import MassiveDecks.Util.Html as Html
 import MassiveDecks.Util.Maybe as Maybe
 import MassiveDecks.Util.NeList exposing (NeList(..))
-import Material.Button as Button
-import Material.Card as Card
-import Material.Fab as Fab
+import Ui.Button as Button
+import Ui.Card as Card
+import Ui.Fab as Fab
 
 
 init : Shared -> Config -> Model

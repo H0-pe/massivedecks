@@ -16,7 +16,7 @@
 
   overflow: hidden;
 
-  background-color: transparentize(colors.$secondary-background, 0.2);
+  background-color: rgba(0, 0, 0, 0.7);
 
   display: flex;
   flex-direction: column;
@@ -25,14 +25,32 @@
   transition: opacity 200ms ease-in;
 
   #invite-link-field {
-    border: 0;
-    border-bottom: 2px solid colors.$secondary-background;
     flex-grow: 1;
+    min-width: 0;
+    padding: 0.6rem 0.75rem;
+    border: 2px solid transparent;
+    border-radius: 0.75rem;
+    background: colors.$surface-raised;
+    color: colors.$text;
+    font: inherit;
+    font-weight: 600;
     text-align: center;
 
     &:focus {
       outline: none;
+      border-color: colors.$primary;
     }
+  }
+
+  // The QR code needs a light background to scan.
+  .invite-qr svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+    padding: 1em;
+    border-radius: 1em;
+    background: colors.$text;
   }
 
   &.open {

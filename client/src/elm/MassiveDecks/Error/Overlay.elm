@@ -13,8 +13,8 @@ import MassiveDecks.Pages.Route exposing (Route)
 import MassiveDecks.Strings as Strings
 import MassiveDecks.Strings.Languages as Lang
 import MassiveDecks.Util.NeList as NeList exposing (NeList(..))
-import Material.Card as Card
-import Material.IconButton as IconButton
+import Ui.Card as Card
+import Ui.IconButton as IconButton
 
 
 init : Error.Overlay

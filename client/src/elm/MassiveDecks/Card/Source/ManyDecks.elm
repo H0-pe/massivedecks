@@ -16,7 +16,7 @@ import MassiveDecks.Pages.Lobby.Configure.Decks.Model exposing (DeckOrError)
 import MassiveDecks.Strings as Strings exposing (MdString)
 import MassiveDecks.Strings.Languages as Lang
 import MassiveDecks.Util.Maybe as Maybe
-import Material.TextField as TextField
+import Ui.TextField as TextField
 import Url.Builder as Url
 
 

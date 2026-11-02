@@ -32,7 +32,7 @@ import MassiveDecks.Pages.Lobby.Configure.Decks.Model exposing (DeckOrError)
 import MassiveDecks.Strings as Strings exposing (MdString)
 import MassiveDecks.Strings.Languages as Lang
 import MassiveDecks.Util.Maybe as Maybe
-import Material.Select as Select
+import Ui.Select as Select
 import Paper.Tooltip as Tooltip
 
 
@@ -190,10 +190,8 @@ generalEditor shared existing currentValue update submit noOp =
 
         toItem source =
             { id = source.id ()
-            , icon = source.logo ()
-            , primary = [ () |> source.name |> Lang.string shared |> Html.text ]
+            , label = () |> source.name |> Lang.string shared
             , secondary = Nothing
-            , meta = Nothing
             }
     in
     ( Select.view

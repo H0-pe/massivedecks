@@ -44,10 +44,10 @@ import MassiveDecks.Strings.Languages.Model as Lang exposing (Language)
 import MassiveDecks.Util.Maybe as Maybe
 import MassiveDecks.Util.NeList as NeList exposing (NeList(..))
 import MassiveDecks.Util.Order as Order
-import Material.IconButton as IconButton
-import Material.Select as Select
-import Material.Slider as Slider
-import Material.Switch as Switch
+import Ui.IconButton as IconButton
+import Ui.Select as Select
+import Ui.Slider as Slider
+import Ui.Switch as Switch
 
 
 init : (Msg -> msg) -> Settings -> ( Model, Cmd msg )
@@ -494,13 +494,11 @@ combinedOrder (NeList first rest) a b =
                     result
 
 
-speechVoiceOption : Speech.Voice -> Select.ItemModel String msg
+speechVoiceOption : Speech.Voice -> Select.ItemModel String
 speechVoiceOption voice =
     { id = voice.name
-    , icon = Nothing
-    , primary = [ voice.name |> Html.text ]
+    , label = voice.name
     , secondary = Nothing
-    , meta = Nothing
     }
 
 
@@ -601,7 +599,7 @@ languageSelector wrap shared =
         [ Message.info Strings.MissingLanguage ]
 
 
-languageOption : Shared -> Language -> Language -> Select.ItemModel Language msg
+languageOption : Shared -> Language -> Language -> Select.ItemModel Language
 languageOption shared currentLanguage language =
     let
         nameInCurrentLanguage =
@@ -609,19 +607,15 @@ languageOption shared currentLanguage language =
                 |> Lang.languageName
                 |> Lang.givenLanguageString currentLanguage
 
-        viewAutonym n =
-            [ Html.span [ language |> Lang.langAttr ]
-                [ Strings.AutonymFormat { autonym = n } |> Lang.html shared ]
-            ]
-
         autonym =
-            language |> Lang.autonym |> viewAutonym |> Maybe.justIf (language /= currentLanguage)
+            language
+                |> Lang.autonym
+                |> (\n -> Strings.AutonymFormat { autonym = n } |> Lang.string shared)
+                |> Maybe.justIf (language /= currentLanguage)
     in
     { id = language
-    , icon = Nothing
-    , primary = [ nameInCurrentLanguage |> Html.text ]
+    , label = nameInCurrentLanguage
     , secondary = autonym
-    , meta = Nothing
     }
 
 

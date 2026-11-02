@@ -58,9 +58,9 @@ import MassiveDecks.Util.Html as Html
 import MassiveDecks.Util.Html.Events as HtmlE
 import MassiveDecks.Util.Maybe as Maybe
 import MassiveDecks.Util.NeList as NeList
-import Material.Button as Button
-import Material.Card as Card
-import Material.IconButton as IconButton
+import Ui.Button as Button
+import Ui.Card as Card
+import Ui.IconButton as IconButton
 import Material.LinearProgress as LinearProgress
 import Set exposing (Set)
 import Task

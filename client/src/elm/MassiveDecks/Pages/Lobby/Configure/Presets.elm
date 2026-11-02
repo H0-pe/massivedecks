@@ -25,9 +25,9 @@ import MassiveDecks.Settings.Model exposing (Preset)
 import MassiveDecks.Strings as Strings
 import MassiveDecks.Strings.Languages as Lang
 import MassiveDecks.Util.Maybe as Maybe
-import Material.Button as Button
-import Material.IconButton as IconButton
-import Material.TextField as TextField
+import Ui.Button as Button
+import Ui.IconButton as IconButton
+import Ui.TextField as TextField
 
 
 {-| Capture the given configuration as a preset with the given name.

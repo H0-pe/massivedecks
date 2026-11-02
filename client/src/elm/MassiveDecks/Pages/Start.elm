@@ -50,11 +50,11 @@ import MassiveDecks.Util.Html as Html
 import MassiveDecks.Util.Maybe as Maybe
 import MassiveDecks.Util.NeList as NeList exposing (NeList(..))
 import MassiveDecks.Version as Version
-import Material.Button as Button
-import Material.Card as Card
-import Material.IconButton as IconButton
-import Material.Tabs as Tabs
-import Material.TextField as TextField
+import Ui.Button as Button
+import Ui.Card as Card
+import Ui.IconButton as IconButton
+import Ui.Tabs as Tabs
+import Ui.TextField as TextField
 import Svg.Attributes as SvgA
 
 

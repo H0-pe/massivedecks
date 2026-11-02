@@ -1,0 +1,490 @@
+@use "./_colors";
+@use "./_fonts";
+
+// The app's own controls (src/elm/Ui): native elements drawn in the dark design, replacing the Material components.
+
+$radius: 0.75rem;
+$field-height: 3.25rem;
+
+// Surfaces.
+.mdc-card.ui-card {
+  background: colors.$surface;
+  color: colors.$text;
+  border: 1px solid colors.$line;
+  border-radius: 1.25rem;
+  box-shadow: none;
+  padding: 1.25rem;
+}
+
+// Labelled inputs and drop-downs: the label sits above the value inside one rounded box.
+.ui-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: $field-height;
+  padding: 0.55rem 0.9rem 0.5rem;
+  text-align: left;
+  border-radius: $radius;
+  background: colors.$surface-raised;
+  border: 2px solid transparent;
+  cursor: text;
+  transition: border-color 0.15s;
+
+  &:hover {
+    border-color: colors.$line-strong;
+  }
+
+  &:focus-within {
+    border-color: colors.$primary;
+  }
+
+  .ui-field-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: colors.$text-muted;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: colors.$text;
+    font-family: fonts.$general;
+    font-weight: 800;
+    font-size: 1.0625rem;
+    line-height: 1.3;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: colors.$text-faint;
+  }
+
+  textarea {
+    min-height: 4.5em;
+    resize: vertical;
+  }
+
+  input[type="number"] {
+    font-family: fonts.$display;
+    font-weight: normal;
+    font-size: 1.375rem;
+  }
+
+  &.disabled {
+    background: transparent;
+    border: 2px dashed colors.$line-strong;
+    cursor: default;
+
+    &:hover {
+      border-color: colors.$line-strong;
+    }
+
+    input,
+    select {
+      color: colors.$text-muted;
+    }
+  }
+}
+
+.ui-select {
+  cursor: pointer;
+
+  select {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 1.75rem;
+    text-overflow: ellipsis;
+  }
+
+  // A chevron instead of the platform's arrow.
+  &::after {
+    content: "";
+    position: absolute;
+    right: 1rem;
+    bottom: 1.05rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid colors.$text-muted;
+    border-bottom: 2px solid colors.$text-muted;
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+
+  option {
+    background: colors.$surface-raised;
+    color: colors.$text;
+    font-weight: 600;
+  }
+
+  &.disabled select {
+    cursor: default;
+  }
+}
+
+// An on/off toggle drawn over a real checkbox, so it works with the keyboard and screen readers.
+.ui-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 3.25rem;
+    height: 2rem;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .ui-switch-track {
+    flex: none;
+    position: relative;
+    width: 3.25rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: colors.$line-strong;
+    transition: background 0.15s;
+  }
+
+  .ui-switch-thumb {
+    position: absolute;
+    top: 0.25rem;
+    left: 0.25rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: colors.$text-muted;
+    transition:
+      transform 0.15s,
+      background 0.15s;
+  }
+
+  input:checked + .ui-switch-track {
+    background: colors.$primary;
+
+    .ui-switch-thumb {
+      transform: translateX(1.25rem);
+      background: colors.$on-primary;
+    }
+  }
+
+  input:focus-visible + .ui-switch-track {
+    outline: 2px solid colors.$text;
+    outline-offset: 2px;
+  }
+
+  .ui-switch-label {
+    font-weight: 800;
+  }
+
+  .ui-switch-label:empty {
+    display: none;
+  }
+
+  &.disabled {
+    cursor: default;
+    opacity: 0.5;
+
+    input {
+      cursor: default;
+    }
+  }
+}
+
+// Buttons.
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  min-height: 2.75rem;
+  padding: 0 1.1rem;
+  border-radius: $radius;
+  border: 2px solid transparent;
+  background: transparent;
+  color: colors.$text;
+  font-family: fonts.$general;
+  font-weight: 800;
+  font-size: 0.9375rem;
+  line-height: 1.1;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+
+  &.filled {
+    background: colors.$primary;
+    color: colors.$on-primary;
+
+    &:hover {
+      background: colors.$primary-light;
+    }
+  }
+
+  &.outlined {
+    border-color: colors.$line-strong;
+
+    &:hover {
+      border-color: colors.$text-muted;
+    }
+  }
+
+  &.text {
+    color: colors.$primary;
+
+    &:hover {
+      background: rgba(colors.$primary, 0.1);
+    }
+  }
+
+  &.dense {
+    min-height: 2.25rem;
+    padding: 0 0.8rem;
+    font-size: 0.875rem;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$text;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: default;
+    background: colors.$surface-raised;
+    border-color: transparent;
+    color: colors.$text-faint;
+  }
+
+  &.text:disabled {
+    background: transparent;
+  }
+}
+
+.ui-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: $radius;
+  background: transparent;
+  color: inherit;
+  font-size: 1.125rem;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(colors.$text, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$text;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.4;
+    background: transparent;
+  }
+
+  svg {
+    width: 1em;
+    height: 1em;
+  }
+}
+
+// Round floating buttons (save/revert changes, take back a play).
+.ui-fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: 1.1rem;
+  background: colors.$primary;
+  color: colors.$on-primary;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.5);
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition:
+    opacity 15ms linear 30ms,
+    transform 0.27s cubic-bezier(0, 0, 0.2, 1);
+
+  &:hover {
+    background: colors.$primary-light;
+  }
+
+  &.mini {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.9rem;
+    font-size: 1rem;
+    background: colors.$surface-raised;
+    color: colors.$text;
+
+    &:hover {
+      background: colors.$line-strong;
+    }
+  }
+
+  &.extended {
+    width: auto;
+    padding: 0 1.4rem;
+    font-family: fonts.$display;
+    font-size: 1.125rem;
+  }
+
+  &:focus-visible {
+    outline: 3px solid colors.$text;
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    background: colors.$surface-raised;
+    color: colors.$text-faint;
+    cursor: default;
+  }
+
+  &.exited {
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.ui-slider {
+  width: 100%;
+  accent-color: colors.$primary;
+  cursor: pointer;
+}
+
+// Notes under a setting: what it does, what's wrong, and buttons to fix it.
+@mixin message($tint) {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.4rem 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: $radius;
+  background: rgba($tint, 0.1);
+  font-size: 0.875rem;
+  line-height: 1.35;
+
+  > span {
+    flex-grow: 1;
+  }
+
+  .message-type-icon {
+    flex: none;
+    margin: 0;
+  }
+
+  .fixes .ui-icon-button {
+    width: 2.25rem;
+    height: 2.25rem;
+    color: $tint;
+    background: rgba($tint, 0.12);
+
+    &:hover {
+      background: rgba($tint, 0.22);
+    }
+  }
+}
+
+.info {
+  @include message(colors.$text);
+  color: colors.$text-muted;
+  background: transparent;
+  padding: 0.25rem 0.1rem;
+}
+
+.warning {
+  @include message(colors.$secondary);
+  color: colors.$secondary;
+}
+
+.inline-error {
+  @include message(colors.$error);
+  color: colors.$error;
+}
+
+.fixes {
+  gap: 0.35rem;
+}
+
+// Menus and lists are still Material web components; give them the dark surface.
+mwc-menu,
+mwc-list {
+  --mdc-theme-surface: #{colors.$surface-raised};
+  --mdc-theme-text-primary-on-background: #{colors.$text};
+  --mdc-menu-max-width: 20rem;
+  --mdc-shape-medium: 14px;
+}
+
+mwc-list-item {
+  --mdc-theme-text-primary-on-background: #{colors.$text};
+  font-family: fonts.$general;
+  font-weight: 600;
+}
+
+// Sections as a row of pills.
+.ui-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.25rem 0 0.875rem;
+
+  button {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: 999px;
+    border: 2px solid colors.$line;
+    background: transparent;
+    color: colors.$text;
+    font-family: fonts.$general;
+    font-weight: 800;
+    font-size: 0.9375rem;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover {
+      border-color: colors.$line-strong;
+    }
+
+    &.selected {
+      background: colors.$primary;
+      border-color: colors.$primary;
+      color: colors.$on-primary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid colors.$text;
+      outline-offset: 2px;
+    }
+  }
+}

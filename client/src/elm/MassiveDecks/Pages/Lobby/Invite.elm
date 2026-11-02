@@ -16,8 +16,8 @@ import MassiveDecks.Strings as Strings
 import MassiveDecks.Strings.Languages as Lang
 import MassiveDecks.Util.Html as Html
 import MassiveDecks.Util.Html.Events as HtmlE
-import Material.Card as Card
-import Material.IconButton as IconButton
+import Ui.Card as Card
+import Ui.IconButton as IconButton
 import QRCode
 import Url exposing (Url)
 
@@ -68,7 +68,7 @@ dialog wrap shared gameCode password open =
                     ]
                 )
                 [ Message.info Strings.InviteLinkHelp ]
-            , lobbyUrl |> qr
+            , Html.div [ HtmlA.class "invite-qr" ] [ lobbyUrl |> qr ]
             ]
         ]
 

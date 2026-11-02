@@ -21,7 +21,7 @@ import MassiveDecks.Model exposing (..)
 import MassiveDecks.Models.MdError as MdError exposing (MdError)
 import MassiveDecks.Strings exposing (MdString)
 import MassiveDecks.Strings.Languages as Lang
-import Material.IconButton as IconButton
+import Ui.IconButton as IconButton
 import Svg.Attributes as Svg
 
 

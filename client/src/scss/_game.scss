@@ -138,7 +138,7 @@
   top: 0;
   bottom: 0;
 
-  mwc-icon-button {
+  .ui-icon-button {
     pointer-events: all;
     position: sticky;
     bottom: 0.5em;
@@ -263,7 +263,7 @@ ol.card-set {
       margin-bottom: 0.5em;
     }
 
-    mwc-button {
+    .ui-button {
       align-self: flex-end;
     }
   }

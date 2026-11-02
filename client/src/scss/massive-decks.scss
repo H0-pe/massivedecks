@@ -1,6 +1,7 @@
 @use "./colors";
 @use "./fonts";
 @use "./material";
+@use "./ui";
 
 @use "./game";
 @use "./pages/start";
@@ -72,7 +73,7 @@ a,
   color: inherit;
   text-decoration: none;
 
-  &:not(.tab) {
+  &:not(.tab):not(.logo) {
     background: linear-gradient(
         to top,
         colors.$secondary 50%,
@@ -186,45 +187,13 @@ a,
     }
   }
 
-  mwc-button {
+  .ui-button {
     align-self: flex-end;
   }
 }
 
 .segment {
   display: inline-block;
-}
-
-@mixin message {
-  font-size: 0.75em;
-  padding: 0.25em;
-  margin: 0.25em;
-  display: flex;
-  align-items: center;
-
-  span {
-    flex-grow: 1;
-  }
-
-  .message-type-icon {
-    margin: 0.3em;
-  }
-}
-
-.info {
-  @include message;
-}
-
-.inline-error {
-  @include message;
-  color: colors.$error;
-  background-color: lighten(colors.$error, 55%);
-  border-radius: 0.5em;
-}
-
-.warning {
-  @include message;
-  color: colors.$secondary;
 }
 
 .fixes {
@@ -236,7 +205,7 @@ a,
   li {
     display: inline-block;
 
-    mwc-icon-button {
+    .ui-icon-button {
       margin: 0;
     }
   }

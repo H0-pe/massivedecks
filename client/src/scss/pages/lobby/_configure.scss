@@ -85,7 +85,7 @@
       margin: 0 0.5em;
     }
 
-    label {
+    label:not(.ui-field) {
       display: flex;
       align-items: center;
       margin: 0;
@@ -251,7 +251,7 @@
       display: flex;
       flex-direction: row;
 
-      mwc-button {
+      .ui-button {
         margin: 0 0.5em;
       }
 
@@ -271,7 +271,7 @@
   background-color: transparentize(colors.$error, 0.9);
 }
 
-#add-deck mwc-icon-button {
+#add-deck .ui-icon-button {
   margin: 0;
 }
 
@@ -304,7 +304,7 @@
     align-items: center;
     gap: 0.5em;
 
-    mwc-textfield {
+    .ui-field {
       flex: 1 1 12em;
     }
   }
@@ -354,6 +354,7 @@
 // Settings sections as a row of pills.
 .configure .config-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   overflow-x: auto;
   padding: 0.875rem 0;
@@ -419,5 +420,39 @@
     background: colors.$surface-raised;
     color: colors.$text-faint;
     cursor: default;
+  }
+}
+
+// A setting that is only a switch (most house rules): a card with the name left, the switch right, and what it does
+// underneath. It lights up when it's on.
+.configure .config-option:has(> .control > .ui-switch:only-child) {
+  margin: 0.5rem 0;
+  padding: 0.75rem 1rem 0.85rem;
+  border-radius: 0.9rem;
+  background: colors.$surface-raised;
+  border: 2px solid transparent;
+
+  &:has(input:checked) {
+    border-color: colors.$primary;
+  }
+
+  > .control .ui-switch {
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .ui-switch-label {
+    font-size: 1.0625rem;
+  }
+
+  > .info {
+    margin: 0;
+    padding: 0;
+    font-size: 0.8125rem;
+
+    .message-type-icon {
+      display: none;
+    }
   }
 }

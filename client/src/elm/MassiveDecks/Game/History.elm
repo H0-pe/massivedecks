@@ -19,7 +19,7 @@ import MassiveDecks.Strings as Strings
 import MassiveDecks.Strings.Languages as Lang
 import MassiveDecks.User as User exposing (User)
 import MassiveDecks.Util.Maybe as Maybe
-import Material.IconButton as IconButton
+import Ui.IconButton as IconButton
 
 
 view : (Msg -> msg) -> Shared -> Config -> Dict User.Id User -> String -> List (Round.Specific Round.Complete) -> List (Html msg)

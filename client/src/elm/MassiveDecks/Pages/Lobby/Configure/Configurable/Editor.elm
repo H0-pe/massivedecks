@@ -21,9 +21,9 @@ import MassiveDecks.Strings as Strings exposing (MdString)
 import MassiveDecks.Strings.Languages as Lang
 import MassiveDecks.Util.Html as Html
 import MassiveDecks.Util.Maybe as Maybe
-import Material.IconButton as IconButton
-import Material.Switch as Switch
-import Material.TextField as TextField
+import Ui.IconButton as IconButton
+import Ui.Switch as Switch
+import Ui.TextField as TextField
 
 
 type alias EditorArgs =
