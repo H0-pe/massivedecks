@@ -19,6 +19,9 @@ export interface ClientInfo {
   decks: {
     id: string;
     name: string;
+    official: boolean;
+    calls: number;
+    responses: number;
   }[];
 }
 
@@ -172,16 +175,19 @@ export class MetaResolver implements Source.MetaResolver<JsonAgainstHumanity> {
     }
   >;
   private readonly order: string[];
+  private readonly packs: Map<string, Pack>;
   public readonly cache = false;
 
   public constructor(config: Config.JsonAgainstHumanity, decks: Packs) {
     this.config = config;
     this.decks = new Map();
+    this.packs = new Map();
     const protoOrder: [string, Pack][] = [];
     for (let index = 0; index < decks.packs.length; index++) {
       const id = index.toString();
       const pack = decks.packs[index] as Pack;
       this.decks.set(id, rawDeckToSummaryAndTemplates(decks, pack, id));
+      this.packs.set(id, pack);
       protoOrder.push([id, pack]);
     }
     protoOrder.sort(MetaResolver.compare);
@@ -204,11 +210,18 @@ export class MetaResolver implements Source.MetaResolver<JsonAgainstHumanity> {
   public clientInfo(): ClientInfo {
     return {
       aboutUrl: this.config.aboutUrl,
-      decks: this.order.map((id) => ({
-        id,
-        name: (this.decks.get(id) as { summary: Source.Summary }).summary
-          .details.name,
-      })),
+      // Official/community and card counts let the client's deck browser filter and describe the decks.
+      decks: this.order.map((id) => {
+        const pack = this.packs.get(id) as Pack;
+        return {
+          id,
+          name: (this.decks.get(id) as { summary: Source.Summary }).summary
+            .details.name,
+          official: pack.official,
+          calls: pack.black.length,
+          responses: pack.white.length,
+        };
+      }),
     };
   }
 

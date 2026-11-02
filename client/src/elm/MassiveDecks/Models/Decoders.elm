@@ -116,6 +116,9 @@ jsonAgainstHumanityInfo =
             Json.succeed JsonAgianstHumanity.Deck
                 |> Json.required "id" JsonAgianstHumanity.idDecoder
                 |> Json.required "name" Json.string
+                |> Json.optional "official" Json.bool False
+                |> Json.optional "calls" Json.int 0
+                |> Json.optional "responses" Json.int 0
     in
     Json.succeed JsonAgianstHumanity.Info
         |> Json.required "aboutUrl" Json.string

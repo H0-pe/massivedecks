@@ -24,6 +24,7 @@ import MassiveDecks.Models.Encoders as Encoders
 import MassiveDecks.Pages.Lobby.Actions as Actions
 import MassiveDecks.Pages.Lobby.Configure.Configurable as Configurable
 import MassiveDecks.Pages.Lobby.Configure.Configurable.Model exposing (Configurable)
+import MassiveDecks.Pages.Lobby.Configure.Decks.Browser as Browser
 import MassiveDecks.Pages.Lobby.Configure.Decks.Model exposing (..)
 import MassiveDecks.Settings as Settings
 import MassiveDecks.Strings as Strings
@@ -32,6 +33,7 @@ import MassiveDecks.Util.Html as Html
 import MassiveDecks.Util.Maybe as Maybe
 import MassiveDecks.Util.NeList exposing (NeList(..))
 import MassiveDecks.Util.Result as Result
+import Ui.Button as Button
 import Ui.IconButton as IconButton
 import Paper.Tooltip as Tooltip
 import Svg.Attributes as SvgA
@@ -39,7 +41,17 @@ import Svg.Attributes as SvgA
 
 init : Shared -> Model
 init shared =
-    { toAdd = Source.default shared }
+    { toAdd = manyDecksEmpty shared
+    , browser = Nothing
+    }
+
+
+{-| Decks from the built-in source and JSON Against Humanity are picked in the deck browser; the only thing left to
+type in is a Many Decks deck code.
+-}
+manyDecksEmpty : Shared -> Source.External
+manyDecksEmpty shared =
+    Source.empty shared Source.GManyDecks
 
 
 {-| We have this just to make sure it gets correctly updated, we'll never render it, decks are custom.
@@ -56,24 +68,61 @@ all =
 
 {-| React to user input.
 -}
-update : Shared -> Msg -> Model -> ( Model, Shared, Cmd msg )
-update shared msg model =
+update : Shared -> Config -> Msg -> Model -> ( Model, Shared, Cmd msg )
+update shared existing msg model =
+    let
+        add source =
+            let
+                ( settings, settingsCmd ) =
+                    Settings.onAddDeck source shared.settings
+            in
+            ( { shared | settings = settings }, Cmd.batch [ Actions.configure (addDeck source), settingsCmd ] )
+    in
     case msg of
         Update source ->
             ( { model | toAdd = source }, shared, Cmd.none )
 
         Add source ->
             let
-                ( settings, settingsCmd ) =
-                    Settings.onAddDeck source shared.settings
+                ( newShared, cmd ) =
+                    add source
             in
-            ( { model | toAdd = Source.emptyMatching shared source }
-            , { shared | settings = settings }
-            , Cmd.batch [ Actions.configure (addDeck source), settingsCmd ]
-            )
+            ( { model | toAdd = manyDecksEmpty shared }, newShared, cmd )
 
         Remove index ->
             ( model, shared, Actions.configure (removeDeck index) )
+
+        Toggle source ->
+            let
+                index =
+                    existing
+                        |> List.indexedMap Tuple.pair
+                        |> List.filter (\( _, d ) -> Source.equals d.source source)
+                        |> List.head
+                        |> Maybe.map Tuple.first
+            in
+            case index of
+                Just i ->
+                    ( model, shared, Actions.configure (removeDeck i) )
+
+                Nothing ->
+                    let
+                        ( newShared, cmd ) =
+                            add source
+                    in
+                    ( model, newShared, cmd )
+
+        OpenBrowser ->
+            ( { model | browser = Just { query = "", filter = AllDecks } }, shared, Cmd.none )
+
+        CloseBrowser ->
+            ( { model | browser = Nothing }, shared, Cmd.none )
+
+        SetBrowserQuery query ->
+            ( { model | browser = model.browser |> Maybe.map (\b -> { b | query = query }) }, shared, Cmd.none )
+
+        SetBrowserFilter filter ->
+            ( { model | browser = model.browser |> Maybe.map (\b -> { b | filter = filter }) }, shared, Cmd.none )
 
         NoOp ->
             ( model, shared, Cmd.none )
@@ -112,10 +161,26 @@ view wrap shared model remote canEdit =
 
         editor =
             if canEdit then
-                addDeckWidget wrap shared remote model.toAdd
+                Html.div []
+                    [ Button.viewWithAttrs Button.Outlined
+                        Button.Padded
+                        (Strings.BrowseDecks |> Lang.string shared)
+                        (Icon.find |> Icon.view |> Just)
+                        (OpenBrowser |> wrap |> Just)
+                        [ HtmlA.class "browse-decks" ]
+                    , addDeckWidget wrap shared remote model.toAdd
+                    ]
 
             else
                 Html.nothing
+
+        browser =
+            case ( canEdit, model.browser ) of
+                ( True, Just b ) ->
+                    Browser.view wrap shared remote b
+
+                _ ->
+                    Html.nothing
     in
     Html.div [ HtmlA.id "decks-tab", HtmlA.class "compressed-terms" ]
         [ Html.h3 [] [ Strings.ConfigureDecks |> Lang.html shared ]
@@ -135,6 +200,7 @@ view wrap shared model remote canEdit =
             , Html.tbody [] tableContent
             ]
         , editor
+        , browser
         ]
 
 
@@ -192,24 +258,26 @@ addDeckWidget wrap shared existing deckToAdd =
         submit =
             deckToAdd |> submitDeckAction wrap existing
 
-        ( sourcePicker, deckPicker ) =
-            Source.generalEditor shared existing deckToAdd (Update >> wrap) (submit |> Result.toMaybe) (NoOp |> wrap)
+        deckPicker =
+            Source.editor shared existing deckToAdd (Update >> wrap) (submit |> Result.toMaybe) (NoOp |> wrap)
     in
-    Form.section
-        shared
-        "add-deck"
-        (Html.div []
-            [ Html.div [ HtmlA.class "multipart" ] [ sourcePicker ]
-            , Html.div [ HtmlA.class "multipart" ]
-                [ deckPicker
-                , IconButton.view
-                    (Icon.add |> Icon.view)
-                    (Strings.AddDeck |> Lang.string shared)
-                    (submit |> Result.toMaybe)
-                ]
-            ]
-        )
-        ((deckToAdd |> Source.generalMatching |> Source.messages) ++ (submit |> Result.error |> Maybe.withDefault []))
+    case shared.sources.manyDecks of
+        Just _ ->
+            Form.section
+                shared
+                "add-deck"
+                (Html.div [ HtmlA.class "multipart" ]
+                    [ deckPicker
+                    , IconButton.view
+                        (Icon.add |> Icon.view)
+                        (Strings.AddDeck |> Lang.string shared)
+                        (submit |> Result.toMaybe)
+                    ]
+                )
+                ((deckToAdd |> Source.generalMatching |> Source.messages) ++ (submit |> Result.error |> Maybe.withDefault []))
+
+        Nothing ->
+            Html.nothing
 
 
 submitDeckAction : (Msg -> msg) -> List DeckOrError -> Source.External -> Result (List (Message msg)) msg

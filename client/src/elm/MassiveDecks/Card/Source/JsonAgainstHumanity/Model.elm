@@ -32,6 +32,9 @@ type alias Info =
 type alias Deck =
     { id : Id
     , name : String
+    , official : Bool
+    , calls : Int
+    , responses : Int
     }
 
 

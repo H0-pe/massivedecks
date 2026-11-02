@@ -5,6 +5,8 @@ module MassiveDecks.Pages.Lobby.Configure.Decks.Model exposing
     , Error
     , GetSummary
     , Id(..)
+    , Browser
+    , BrowserFilter(..)
     , Model
     , Msg(..)
     , deckToDeckOrError
@@ -58,7 +60,25 @@ errorToDeckOrError { source, reason } =
 -}
 type alias Model =
     { toAdd : Source.External
+    , browser : Maybe Browser
     }
+
+
+{-| The deck browser, while it is open.
+-}
+type alias Browser =
+    { query : String
+    , filter : BrowserFilter
+    }
+
+
+{-| Which decks the browser lists.
+-}
+type BrowserFilter
+    = AllDecks
+    | OfficialDecks
+    | CommunityDecks
+    | AddedDecks
 
 
 {-| The configuration value for decks.
@@ -73,4 +93,9 @@ type Msg
     = Update Source.External
     | Add Source.External
     | Remove Int
+    | Toggle Source.External
+    | OpenBrowser
+    | CloseBrowser
+    | SetBrowserQuery String
+    | SetBrowserFilter BrowserFilter
     | NoOp

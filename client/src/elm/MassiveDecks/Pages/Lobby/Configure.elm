@@ -89,7 +89,7 @@ update wrap token shared msg model config =
         DecksMsg decksMsg ->
             let
                 ( decks, newShared, cmd ) =
-                    Decks.update shared decksMsg model.decks
+                    Decks.update shared config.decks decksMsg model.decks
             in
             ( { model | decks = decks }, newShared, cmd )
 

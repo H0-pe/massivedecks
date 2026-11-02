@@ -438,6 +438,53 @@ translate _ mdString =
         PointsShort _ ->
             [ Text "Pkt." ]
 
+        BrowseDecks ->
+            [ Text "Decks durchsuchen" ]
+
+        DeckBrowserTitle ->
+            [ Text "Decks auswählen" ]
+
+        DeckBrowserDone ->
+            [ Text "Fertig" ]
+
+        SearchDecks ->
+            [ Text "Decks suchen" ]
+
+        DeckFilterAll ->
+            [ Text "Alle" ]
+
+        DeckFilterOfficial ->
+            [ Text "Offiziell" ]
+
+        DeckFilterCommunity ->
+            [ Text "Community" ]
+
+        DeckFilterAdded ->
+            [ Text "Im Spiel" ]
+
+        DeckCount { count } ->
+            [ count |> String.fromInt |> Text
+            , Text
+                (if count == 1 then
+                    " Deck"
+
+                 else
+                    " Decks"
+                )
+            ]
+
+        DeckCardCounts { calls, responses } ->
+            [ calls |> String.fromInt |> Text, Text " schwarz · ", responses |> String.fromInt |> Text, Text " weiß" ]
+
+        AddDeckShort ->
+            [ Text "Hinzufügen" ]
+
+        DeckInGame ->
+            [ Text "Dabei" ]
+
+        NoMatchingDecks ->
+            [ Text "Keine passenden Decks." ]
+
         TvEveryoneVotes ->
             [ Text "Alle stimmen ab" ]
 

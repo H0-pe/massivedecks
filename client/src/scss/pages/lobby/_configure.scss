@@ -452,3 +452,145 @@
     }
   }
 }
+
+.browse-decks {
+  margin: 0.25rem 0 0.75rem;
+}
+
+// The deck browser: a panel over the lobby (full screen on phones) with search, filters and one row per deck.
+#deck-browser {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .deck-browser-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .deck-browser-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: min(44rem, calc(100vw - 2rem));
+    height: min(48rem, calc(100vh - 2rem));
+    box-sizing: border-box;
+    padding: 1.25rem 1.25rem 0;
+    border-radius: 1.25rem;
+    border: 1px solid colors.$line-strong;
+    background: colors.$surface;
+    box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.6);
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    h2 {
+      margin: 0;
+      font-family: fonts.$display;
+      font-weight: normal;
+      font-size: 1.5rem;
+    }
+  }
+
+  .ui-tabs {
+    padding: 0;
+  }
+
+  .deck-browser-count {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: colors.$text-muted;
+  }
+
+  .deck-browser-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    list-style: none;
+    margin: 0 -0.5rem;
+    padding: 0 0.5rem 1.25rem;
+  }
+
+  .empty-info {
+    flex: 1;
+  }
+
+  .deck-browser-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 0.8rem;
+    border: 2px solid transparent;
+
+    & + .deck-browser-row {
+      margin-top: 0.25rem;
+    }
+
+    &:hover {
+      background: colors.$surface-raised;
+    }
+
+    &.added {
+      background: colors.$surface-raised;
+      border-color: colors.$primary;
+    }
+
+    .ui-button {
+      flex: none;
+      min-width: 7.5rem;
+    }
+  }
+
+  .deck-browser-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .deck-browser-name {
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  .deck-browser-detail {
+    font-size: 0.8125rem;
+    color: colors.$text-muted;
+  }
+
+  .deck-browser-detail:empty {
+    display: none;
+  }
+}
+
+@media (max-width: 36rem) {
+  #deck-browser .deck-browser-panel {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    border: 0;
+    padding: 1rem 1rem 0;
+  }
+
+  #deck-browser .deck-browser-row .ui-button {
+    min-width: 0;
+  }
+}
+
+#add-deck .multipart > :not(.ui-icon-button) {
+  flex: 1 1 8em;
+  min-width: 0;
+}

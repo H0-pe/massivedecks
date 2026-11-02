@@ -448,6 +448,45 @@ translate maybeDeclCase mdString =
         PointsShort _ ->
             [ Missing ]
 
+        BrowseDecks ->
+            [ Missing ]
+
+        DeckBrowserTitle ->
+            [ Missing ]
+
+        DeckBrowserDone ->
+            [ Missing ]
+
+        SearchDecks ->
+            [ Missing ]
+
+        DeckFilterAll ->
+            [ Missing ]
+
+        DeckFilterOfficial ->
+            [ Missing ]
+
+        DeckFilterCommunity ->
+            [ Missing ]
+
+        DeckFilterAdded ->
+            [ Missing ]
+
+        DeckCount _ ->
+            [ Missing ]
+
+        DeckCardCounts _ ->
+            [ Missing ]
+
+        AddDeckShort ->
+            [ Missing ]
+
+        DeckInGame ->
+            [ Missing ]
+
+        NoMatchingDecks ->
+            [ Missing ]
+
         TvEveryoneVotes ->
             [ Missing ]
 

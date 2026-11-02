@@ -395,6 +395,53 @@ translate _ mdString =
                 )
             ]
 
+        BrowseDecks ->
+            [ Text "Browse decks" ]
+
+        DeckBrowserTitle ->
+            [ Text "Choose decks" ]
+
+        DeckBrowserDone ->
+            [ Text "Done" ]
+
+        SearchDecks ->
+            [ Text "Search decks" ]
+
+        DeckFilterAll ->
+            [ Text "All" ]
+
+        DeckFilterOfficial ->
+            [ Text "Official" ]
+
+        DeckFilterCommunity ->
+            [ Text "Community" ]
+
+        DeckFilterAdded ->
+            [ Text "In this game" ]
+
+        DeckCount { count } ->
+            [ count |> String.fromInt |> Text
+            , Text
+                (if count == 1 then
+                    " deck"
+
+                 else
+                    " decks"
+                )
+            ]
+
+        DeckCardCounts { calls, responses } ->
+            [ calls |> String.fromInt |> Text, Text " black · ", responses |> String.fromInt |> Text, Text " white" ]
+
+        AddDeckShort ->
+            [ Text "Add" ]
+
+        DeckInGame ->
+            [ Text "Added" ]
+
+        NoMatchingDecks ->
+            [ Text "No decks match." ]
+
         TvEveryoneVotes ->
             [ Text "Everyone votes" ]
 

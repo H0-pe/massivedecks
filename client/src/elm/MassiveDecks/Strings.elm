@@ -134,6 +134,19 @@ type MdString
     | VoteCount { votes : Int } -- How many votes a play got.
     | TvVoting { voted : Int, total : Int } -- How many have voted so far, on the TV.
     | TvEveryoneVotes -- The TV's headline while everyone votes.
+    | BrowseDecks -- A button opening the list of all decks the server offers.
+    | DeckBrowserTitle -- The heading of the deck browser.
+    | DeckBrowserDone -- Closes the deck browser.
+    | SearchDecks -- The label of the deck browser's search field.
+    | DeckFilterAll -- Deck browser filter: every deck.
+    | DeckFilterOfficial -- Deck browser filter: official decks.
+    | DeckFilterCommunity -- Deck browser filter: decks made by fans.
+    | DeckFilterAdded -- Deck browser filter: decks already in this game.
+    | DeckCount { count : Int } -- How many decks the deck browser lists.
+    | DeckCardCounts { calls : Int, responses : Int } -- How many black and white cards a deck has.
+    | AddDeckShort -- A short button label: add this deck to the game.
+    | DeckInGame -- A short button label on a deck that is in the game (pressing it removes it).
+    | NoMatchingDecks -- The deck browser has nothing to show for the search and filter.
     | GameReader { name : String } -- In the game's status line: who reads the answers out this round.
     | PointsShort { points : Int } -- A short unit after a player's points, e.g. "pts".
     | TvPickAnswers -- The TV's headline while players pick their answers.
