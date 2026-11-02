@@ -8,6 +8,13 @@ name: massivedecks
 networks:
   internal:
 
+# Docker keeps container logs forever by default.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   server:
     # Aus diesem Fork gebaut: enthält die Hausregel „God Is Dead“ (Abstimmen statt Kartenzar).
@@ -19,12 +26,18 @@ services:
     container_name: massivedecks-server
     environment:
       - NODE_ENV=production
-      - MD_SECRET=${MD_SECRET}
+      - MD_SECRET=${MD_SECRET:?MD_SECRET must be set in .env}
     volumes:
       - ./config.json5:/md/config.json5:ro
     networks:
       - internal
     restart: unless-stopped
+    logging: *logging
+    mem_limit: 768m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
 
   client:
     build:
@@ -35,8 +48,13 @@ services:
     container_name: massivedecks-client
     depends_on:
       - server
+    # Only cloudflared on this host talks to the client; nothing else on the network should bypass Cloudflare.
     ports:
-      - "3010:8080/tcp"
+      - "127.0.0.1:3010:8080/tcp"
     networks:
       - internal
     restart: unless-stopped
+    logging: *logging
+    mem_limit: 128m
+    security_opt:
+      - no-new-privileges:true

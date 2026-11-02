@@ -31,13 +31,14 @@ export class InMemoryStore extends Store {
   private readonly _id: string;
   private readonly lobbies: Map<GameCode.GameCode, LobbyMeta>;
   private readonly timeouts: Map<Timeout.Id, TimeoutMeta>;
-  private nextLobby: number;
+  // Every code handed out so far, so closed lobbies can be told apart from codes that never existed.
+  private readonly issued: Set<GameCode.GameCode>;
 
   public constructor(config: ServerConfig.InMemory) {
     super();
     this.config = config;
     this._id = uuid.v4();
-    this.nextLobby = 0;
+    this.issued = new Set();
     this.lobbies = new Map();
     this.timeouts = new Map();
   }
@@ -66,9 +67,12 @@ export class InMemoryStore extends Store {
     token: Token.Token;
     tasks: Iterable<Task>;
   }> {
-    const gameCode = GameCode.encode(this.nextLobby);
+    let gameCode: GameCode.GameCode;
+    do {
+      gameCode = GameCode.random();
+    } while (this.issued.has(gameCode));
+    this.issued.add(gameCode);
     const { lobby, tasks } = Lobby.create(gameCode, creation, defaults);
-    this.nextLobby += 1;
     this.lobbies.set(gameCode, { lobby, lastWrite: Date.now() });
     return {
       gameCode,
@@ -89,8 +93,7 @@ export class InMemoryStore extends Store {
     if (lobby !== undefined) {
       return lobby.lobby;
     } else {
-      const lobbyNumber = GameCode.decode(gameCode);
-      if (lobbyNumber < this.nextLobby) {
+      if (this.issued.has(gameCode.toUpperCase())) {
         throw new LobbyClosedError(gameCode);
       } else {
         throw new LobbyDoesNotExistError(gameCode);

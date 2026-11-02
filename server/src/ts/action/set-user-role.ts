@@ -82,7 +82,7 @@ class SetUserRoleActions extends Actions.Implementation<
         if (newRole === "Player") {
           if (!Object.hasOwn(game.players, userId)) {
             const hand = game.decks.responses.draw(game.rules.handSize);
-            additionalMap.set(auth.uid, { hand });
+            additionalMap.set(userId, { hand });
             game.players[userId] = Player.initial(hand);
           }
         }

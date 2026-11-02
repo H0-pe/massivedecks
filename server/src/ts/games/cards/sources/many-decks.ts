@@ -83,8 +83,11 @@ export class Resolver extends Source.Resolver<ManyDecks> {
   }> => {
     const connection = await this.connectionPool.acquire();
     try {
-      const raw = (await connection.get(`api/decks/${this.source.deckCode}`))
-        .data;
+      const raw = (
+        await connection.get(
+          `api/decks/${encodeURIComponent(this.source.deckCode)}`,
+        )
+      ).data;
       const data = typeof raw === "string" ? JSON5.parse(raw) : raw;
       const summary = {
         details: {

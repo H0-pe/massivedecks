@@ -104,8 +104,13 @@ export class SocketManager {
       } catch (e) {
         const error = e as Error;
         try {
+          // Never log tokens, and keep oversized junk out of the logs.
           const dataDescription =
-            typeof data === "string" ? data : `(${typeof data})`;
+            typeof data === "string"
+              ? data
+                  .replace(/"token"\s*:\s*"[^"]*"/g, '"token":"(redacted)"')
+                  .slice(0, 500)
+              : `(${typeof data})`;
           if (error instanceof MassiveDecksError) {
             const details = error.details();
             Logging.logger.warn("WebSocket bad request:", {
@@ -130,6 +135,12 @@ export class SocketManager {
   public add(server: ServerState, gameCode: GameCode, socket: WebSocket): void {
     const sockets = this.sockets;
     let auth: Token.Claims | null = null;
+    // Clients authenticate straight after connecting; don't let idle unauthenticated sockets pile up.
+    const authTimeout = setTimeout(() => {
+      if (auth === null) {
+        socket.close();
+      }
+    }, 10 * 1000);
     socket.on(
       "message",
       this.errorWSHandler(socket, async (data) => {
@@ -188,10 +199,7 @@ export class SocketManager {
                 ],
               };
             });
-            Logging.logger.info("WebSocket connect:", {
-              user: auth.uid,
-              authenticate: validated,
-            });
+            Logging.logger.info("WebSocket connect:", { user: auth.uid });
           } else {
             throw new NotAuthenticatedError();
           }
@@ -210,6 +218,7 @@ export class SocketManager {
     socket.on(
       "close",
       this.errorWSHandler(socket, async () => {
+        clearTimeout(authTimeout);
         if (auth) {
           const uid = auth.uid;
           Logging.logger.info("WebSocket disconnect:", { user: auth.uid });

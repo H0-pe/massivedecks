@@ -259,7 +259,7 @@ export class Judging extends Base<"Judging"> implements Timed {
   }
 
   public waitingFor(): Set<User.Id> | null {
-    return new Set(this.czar);
+    return new Set([this.czar]);
   }
 
   public public(): PublicRound.Judging {
@@ -403,7 +403,7 @@ export class Revealing extends Base<"Revealing"> implements Timed {
   }
 
   public waitingFor(): Set<User.Id> | null {
-    return new Set(this.czar);
+    return new Set([this.czar]);
   }
 
   public public(): PublicRound.Revealing {
@@ -598,7 +598,7 @@ export class Starting extends Base<"Starting"> implements Timed {
   }
 
   public waitingFor(): Set<User.Id> | null {
-    return new Set(this.czar);
+    return new Set([this.czar]);
   }
 
   public advance(

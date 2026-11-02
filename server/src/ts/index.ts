@@ -56,17 +56,24 @@ async function main(): Promise<void> {
     ) as ServerConfig.Unparsed,
   );
 
-  const { app } = ws(express());
+  // Real game messages are a few KB at most; the default limit (100 MiB) lets anyone exhaust the server's memory.
+  const { app } = ws(express(), undefined, {
+    wsOptions: { maxPayload: 64 * 1024 },
+  });
 
   app.use(helmet());
   app.set("trust proxy", true);
 
   const environment = app.get("env");
 
-  if (environment !== "development" && config.secret === "CHANGE ME") {
+  if (
+    environment !== "development" &&
+    (config.secret === "CHANGE ME" || config.secret.length < 32)
+  ) {
     throw new Error(
-      "Secret not set - this should never be the case outside of " +
-        "development. Please set a real random secret value in 'config.json5'.",
+      "Secret not set or too short - this should never be the case outside " +
+        "of development. Please set a real random secret value (at least 32 " +
+        "characters) in 'config.json5'.",
     );
   }
 

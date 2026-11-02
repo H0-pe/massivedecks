@@ -1,3 +1,5 @@
+import { randomInt } from "node:crypto";
+
 import Hashids from "hashids";
 
 /**
@@ -20,6 +22,18 @@ const hashIds = new Hashids(
   2,
   "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
 );
+
+// No 0/O, 1/I/L: easy to read off a TV and type on a phone.
+const randomAlphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+
+/**
+ * A random four character game code (~920,000 possibilities), so codes can't be guessed from each other.
+ */
+export const random = (): GameCode =>
+  Array.from(
+    { length: 4 },
+    () => randomAlphabet[randomInt(randomAlphabet.length)],
+  ).join("");
 
 /**
  * Decode a game code to a lobby id.
