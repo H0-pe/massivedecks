@@ -391,6 +391,46 @@ translate _ mdString =
         HouseRuleWinnersPick ->
             [ Missing ]
 
+        HouseRuleGodIsDead ->
+            [ Text "Gott ist tot" ]
+
+        HouseRuleGodIsDeadDescription ->
+            [ Text "Kein "
+            , ref Czar
+            , Text " wählt den Gewinner: Alle spielen eine Karte und stimmen dann für die beste Antwort ab (nicht für die eigene). "
+            , Text "Bei Gleichstand entscheidet der Zufall. Jemand deckt die Karten trotzdem auf, damit sie vorgelesen werden."
+            ]
+
+        VoteInstruction ->
+            [ Text "Stimm für die beste Antwort ab (nicht für deine eigene)." ]
+
+        VotedInstruction { voted, total } ->
+            [ Text "Abgestimmt. Du kannst deine Stimme ändern, bis alle abgestimmt haben ("
+            , voted |> String.fromInt |> Text
+            , Text " von "
+            , total |> String.fromInt |> Text
+            , Text ")."
+            ]
+
+        VoteForPlay ->
+            [ Text "Für diese Antwort stimmen." ]
+
+        VoteCount { votes } ->
+            [ votes |> String.fromInt |> Text
+            , if votes == 1 then
+                Text " Stimme"
+
+              else
+                Text " Stimmen"
+            ]
+
+        TvVoting { voted, total } ->
+            [ Text "Alle stimmen ab · "
+            , voted |> String.fromInt |> Text
+            , Text "/"
+            , total |> String.fromInt |> Text
+            ]
+
         -- TODO: Translate
         HouseRuleWinnersPickDescription ->
             [ Missing ]

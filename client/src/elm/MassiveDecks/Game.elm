@@ -384,6 +384,22 @@ update wrap shared msg model =
         Reveal play ->
             ( model, Actions.reveal play )
 
+        Vote ->
+            -- Keep the pick highlighted: it is now this player's vote, which they can still change.
+            case round.stage of
+                Round.J stage ->
+                    case stage.pick of
+                        Just pick ->
+                            ( { model | game = { game | round = { round | stage = Round.J { stage | vote = Just pick } } } }
+                            , Actions.vote pick
+                            )
+
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
         Judge ->
             let
                 ( newStage, cmd ) =
@@ -642,6 +658,16 @@ applyGameEvent wrap wrapEvent auth shared gameEvent model =
 
                 _ ->
                     -- TODO: Error
+                    ( model, Cmd.none )
+
+        Events.VoteCast { player } ->
+            case round.stage of
+                Round.J stage ->
+                    ( { model | game = { game | round = { round | stage = Round.J { stage | voted = Set.insert player stage.voted } } } }
+                    , Cmd.none
+                    )
+
+                _ ->
                     ( model, Cmd.none )
 
         Events.PlayLiked { play } ->
@@ -948,6 +974,8 @@ applyGameEvent wrap wrapEvent auth shared gameEvent model =
                                         call
                                         k
                                         False
+                                        Set.empty
+                                        Nothing
                                         |> Round.J
 
                                 Nothing ->
@@ -1137,8 +1165,8 @@ resolvePlayedBy knownPlays details =
             let
                 newPs =
                     case details |> Dict.get known.id of
-                        Just { playedBy, likes } ->
-                            plays |> Dict.insert known.id (Play.WithDetails known.responses playedBy likes)
+                        Just { playedBy, likes, votes } ->
+                            plays |> Dict.insert known.id (Play.WithDetails known.responses playedBy likes votes)
 
                         Nothing ->
                             plays

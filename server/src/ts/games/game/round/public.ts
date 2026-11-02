@@ -42,12 +42,17 @@ export interface Judging extends Base, Timed {
   stage: "Judging";
   call: Card.Call;
   plays: Play.Revealed[];
+  /**
+   * With "God Is Dead": the players who have voted so far (not what they voted for).
+   */
+  voted?: User.Id[];
 }
 
 export interface PlayWithDetails {
   play: Play.Play;
   playedBy: User.Id;
   likes?: Player.Likes;
+  votes?: number;
 }
 
 export interface Complete extends Base {
@@ -61,4 +66,5 @@ export interface Complete extends Base {
 export interface PlayDetails {
   playedBy: User.Id;
   likes?: Player.Likes;
+  votes?: number;
 }

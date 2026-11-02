@@ -14,7 +14,7 @@ import Material.Fab as Fab
 
 actions : List Action
 actions =
-    [ PickCall, EditCall, Submit, TakeBack, Judge, Like, Advance ]
+    [ PickCall, EditCall, Submit, TakeBack, Judge, Vote, Like, Advance ]
 
 
 {-| Style for actions that are blocking the game from continuing until they are performed.
@@ -55,6 +55,9 @@ viewSingle wrap shared visible action =
 
                 Judge ->
                     IconView Icon.win blocking Fab.Normal Strings.JudgePlay Game.Judge
+
+                Vote ->
+                    IconView Icon.accept blocking Fab.Normal Strings.VoteForPlay Game.Vote
 
                 Like ->
                     IconView Icon.like normal Fab.Normal Strings.LikePlay Game.Like

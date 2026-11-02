@@ -138,6 +138,13 @@ export interface NeverHaveIEver {}
  */
 export interface WinnersPick {}
 
+/**
+ * Configuration for the "God Is Dead" house rule.
+ * There is no card czar judging: everyone plays, then all players vote for the best play (not their own). The player
+ * who would be czar still picks the call (with Czar Choices) and reveals the plays, so someone reads them out.
+ */
+export interface GodIsDead {}
+
 export const censor = (rules: Rules): Public => ({
   ...rules,
   houseRules: HouseRules.censor(rules.houseRules),

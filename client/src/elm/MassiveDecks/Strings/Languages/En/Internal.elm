@@ -342,6 +342,46 @@ translate _ mdString =
         HouseRuleWinnersPick ->
             [ Text "Winner's Pick" ]
 
+        HouseRuleGodIsDead ->
+            [ Text "God Is Dead" ]
+
+        HouseRuleGodIsDeadDescription ->
+            [ Text "There is no "
+            , ref Czar
+            , Text " picking the winner: everyone plays, then everyone votes for the best play (but not their own). "
+            , Text "Ties are decided at random. Someone still reveals the plays, so they can be read out."
+            ]
+
+        VoteInstruction ->
+            [ Text "Vote for the best play (not your own)." ]
+
+        VotedInstruction { voted, total } ->
+            [ Text "Vote cast. You can change it until everyone has voted ("
+            , voted |> String.fromInt |> Text
+            , Text " of "
+            , total |> String.fromInt |> Text
+            , Text " voted)."
+            ]
+
+        VoteForPlay ->
+            [ Text "Vote for this play." ]
+
+        VoteCount { votes } ->
+            [ votes |> String.fromInt |> Text
+            , if votes == 1 then
+                Text " vote"
+
+              else
+                Text " votes"
+            ]
+
+        TvVoting { voted, total } ->
+            [ Text "Everyone votes · "
+            , voted |> String.fromInt |> Text
+            , Text "/"
+            , total |> String.fromInt |> Text
+            ]
+
         HouseRuleWinnersPickDescription ->
             [ Text "The winner of each round becomes the ", ref Czar, Text " for the next round." ]
 

@@ -636,6 +636,7 @@ houseRules =
     , ( Strings.HouseRuleNeverHaveIEver, Strings.HouseRuleNeverHaveIEverDescription )
     , ( Strings.HouseRuleHappyEnding, Strings.HouseRuleHappyEndingDescription )
     , ( Strings.HouseRuleWinnersPick, Strings.HouseRuleWinnersPickDescription )
+    , ( Strings.HouseRuleGodIsDead, Strings.HouseRuleGodIsDeadDescription )
     ]
 
 

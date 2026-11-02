@@ -18,6 +18,7 @@ module MassiveDecks.Pages.Lobby.Actions exposing
     , startGame
     , submit
     , takeBack
+    , vote
     )
 
 import Json.Encode as Json
@@ -83,6 +84,11 @@ reveal play =
 judge : Play.Id -> Cmd msg
 judge play =
     action "Judge" [ ( "winner", play |> Json.string ) ]
+
+
+vote : Play.Id -> Cmd msg
+vote play =
+    action "Vote" [ ( "play", play |> Json.string ) ]
 
 
 like : Play.Id -> Cmd msg

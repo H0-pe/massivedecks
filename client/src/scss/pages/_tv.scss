@@ -126,6 +126,13 @@
     color: colors.$error;
   }
 
+  .tv-voting {
+    margin: 0;
+    font-size: 1.4em;
+    font-weight: bold;
+    text-align: center;
+  }
+
   .tv-scores {
     flex: 1 1 auto;
     overflow: hidden;

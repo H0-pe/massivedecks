@@ -126,6 +126,13 @@ type MdString
     | HouseRuleCzarChoicesCustomDescription -- A description of the setting for allowing the czar to write a custom call.
     | HouseRuleWinnersPick -- The name of the house rule where the winner of each round becomes the next czar.
     | HouseRuleWinnersPickDescription -- A description of the house rule where the winner of each round becomes the next czar.
+    | HouseRuleGodIsDead -- The name of the house rule where there is no czar judging and everyone votes for the best play.
+    | HouseRuleGodIsDeadDescription -- A description of the house rule where there is no czar judging and everyone votes for the best play.
+    | VoteInstruction -- Instruction to vote for the best play, but not your own.
+    | VotedInstruction { voted : Int, total : Int } -- Shown after voting: the vote can still be changed, and how many have voted.
+    | VoteForPlay -- The action of voting for the selected play.
+    | VoteCount { votes : Int } -- How many votes a play got.
+    | TvVoting { voted : Int, total : Int } -- Shown on the TV while everyone votes, with how many have voted.
     | SeeAlso { rule : MdString } -- A message telling the user to see another rule.
     | MustBeMoreThanOrEqualValidationError { min : Int } -- An error when a configuration value must be more than or equal to the given value.
     | MustBeLessThanOrEqualValidationError { max : Int } -- An error when a configuration value must be less than or equal to the given value.

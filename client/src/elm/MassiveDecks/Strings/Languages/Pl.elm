@@ -421,6 +421,27 @@ translate maybeDeclCase mdString =
         HouseRuleWinnersPick ->
             [ Missing ]
 
+        HouseRuleGodIsDead ->
+            [ Missing ]
+
+        HouseRuleGodIsDeadDescription ->
+            [ Missing ]
+
+        VoteInstruction ->
+            [ Missing ]
+
+        VotedInstruction _ ->
+            [ Missing ]
+
+        VoteForPlay ->
+            [ Missing ]
+
+        VoteCount _ ->
+            [ Missing ]
+
+        TvVoting _ ->
+            [ Missing ]
+
         -- TODO: Translate
         HouseRuleWinnersPickDescription ->
             [ Missing ]

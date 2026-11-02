@@ -35,6 +35,10 @@
   .likes {
     color: colors.$primary;
   }
+  .votes {
+    font-weight: bold;
+    white-space: nowrap;
+  }
 
   > span {
     margin: 0 0.25em 0 0.25em;

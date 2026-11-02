@@ -2,6 +2,7 @@ import { InvalidActionError } from "../../errors/validation.js";
 import * as Event from "../../event.js";
 import * as PlayerPresenceChanged from "../../events/game-event/player-presence-changed.js";
 import type * as Player from "../../games/player.js";
+import * as GodIsDead from "../../games/rules/god-is-dead.js";
 import type * as Lobby from "../../lobby.js";
 import type { ConstrainedChange } from "../../lobby/change.js";
 import type { ServerState } from "../../server-state.js";
@@ -32,12 +33,22 @@ export const dealWithLostPlayer = (
   }
   player.presence = "Away";
 
+  const voting =
+    game.rules.houseRules.godIsDead !== undefined &&
+    game.round.stage === "Judging";
+
+  // While voting the czar has nothing left to do, so the round can carry on without them.
   const invalidateRoundResult =
-    game.round.czar === playerId ? game.startNewRound(server, lobby) : {};
+    game.round.czar === playerId && !voting
+      ? game.startNewRound(server, lobby)
+      : {};
 
   const removeFromRoundResult = game.round.players.has(playerId)
     ? game.removeFromRound(playerId, server)
     : {};
+
+  // The player who just left might have been the last one we were waiting on to vote.
+  const decidedResult = voting ? GodIsDead.tallyIfComplete(lobby) : {};
 
   return {
     lobby,
@@ -46,6 +57,7 @@ export const dealWithLostPlayer = (
       ...(invalidateRoundResult.events !== undefined
         ? invalidateRoundResult.events
         : []),
+      ...(decidedResult.events ?? []),
     ],
     timeouts: [
       ...(invalidateRoundResult.timeouts !== undefined
@@ -54,6 +66,7 @@ export const dealWithLostPlayer = (
       ...(removeFromRoundResult.timeouts !== undefined
         ? removeFromRoundResult.timeouts
         : []),
+      ...(decidedResult.timeouts ?? []),
     ],
   };
 };

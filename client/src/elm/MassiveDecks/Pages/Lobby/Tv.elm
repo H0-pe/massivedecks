@@ -256,21 +256,43 @@ viewScores shared lobby game =
         round =
             game.game.round
 
-        played =
+        voting =
+            lobby.config.rules.houseRules.godIsDead /= Nothing
+
+        humanPlayers =
+            lobby.users
+                |> Dict.filter (\_ u -> u.role == User.Player && u.presence == User.Joined && u.control == User.Human)
+                |> Dict.keys
+                |> Set.fromList
+
+        -- Who still has to act in this stage (play, or vote with "God Is Dead"), and who already has.
+        ( isActive, participants, done ) =
             case round.stage of
                 Round.P playing ->
-                    playing.played
+                    ( True, round.players, playing.played )
+
+                Round.J judging ->
+                    if voting then
+                        ( True, humanPlayers, judging.voted )
+
+                    else
+                        ( False, Set.empty, Set.empty )
 
                 _ ->
-                    Set.empty
+                    ( False, Set.empty, Set.empty )
 
-        isPlaying =
+        votingStatus =
             case round.stage of
-                Round.P _ ->
-                    True
+                Round.J judging ->
+                    if voting then
+                        Html.p [ HtmlA.class "tv-voting" ]
+                            [ Strings.TvVoting { voted = Set.size judging.voted, total = Set.size humanPlayers } |> Lang.html shared ]
+
+                    else
+                        Html.text ""
 
                 _ ->
-                    False
+                    Html.text ""
 
         -- The player order and the client's player list also contain spectators (like the TV itself).
         viewPlayer id =
@@ -287,11 +309,11 @@ viewScores shared lobby game =
                     if gameOver then
                         Html.text ""
 
+                    else if isActive && Set.member id done then
+                        Icon.accept |> Icon.view
+
                     else if id == round.czar then
                         Icon.czar |> Icon.view
-
-                    else if isPlaying && Set.member id played then
-                        Icon.accept |> Icon.view
 
                     else
                         Html.text ""
@@ -300,8 +322,8 @@ viewScores shared lobby game =
             , Html.li
                 [ HtmlA.classList
                     [ ( "czar", id == round.czar && not gameOver )
-                    , ( "played", Set.member id played )
-                    , ( "waiting", isPlaying && Set.member id round.players && not (Set.member id played) )
+                    , ( "played", isActive && Set.member id done )
+                    , ( "waiting", isActive && Set.member id participants && not (Set.member id done) )
                     , ( "away", user.presence == User.Left )
                     ]
                 ]
@@ -316,6 +338,7 @@ viewScores shared lobby game =
                 |> List.filterMap viewPlayer
     in
     Html.div [ HtmlA.class "tv-scores" ]
-        [ Html.h2 [] [ Strings.TvScores |> Lang.html shared ]
+        [ votingStatus
+        , Html.h2 [] [ Strings.TvScores |> Lang.html shared ]
         , HtmlK.ul [] ordered
         ]

@@ -12,6 +12,7 @@ module MassiveDecks.Game.Rules exposing
     , Stages
     , TimeLimitMode(..)
     , WinnersPick
+    , GodIsDead
     )
 
 {-| Game rules.
@@ -37,6 +38,7 @@ type alias HouseRules =
     , happyEnding : Maybe HappyEnding
     , czarChoices : Maybe CzarChoices
     , winnersPick : Maybe WinnersPick
+    , godIsDead : Maybe GodIsDead
     }
 
 
@@ -93,4 +95,10 @@ type alias CzarChoices =
 
 
 type alias WinnersPick =
+    {}
+
+
+{-| No card czar judging: everyone plays and votes for the best play.
+-}
+type alias GodIsDead =
     {}

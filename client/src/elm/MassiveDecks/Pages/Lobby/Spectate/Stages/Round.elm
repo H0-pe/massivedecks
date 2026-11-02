@@ -86,6 +86,7 @@ viewRevealing wrapGame shared config users _ stage =
             , { play = responses
               , playedBy = Nothing
               , likes = Nothing
+              , votes = Nothing
               }
             )
 
@@ -106,6 +107,7 @@ viewJudging wrapGame shared config users _ stage =
             , { play = Just responses
               , playedBy = Nothing
               , likes = Nothing
+              , votes = Nothing
               }
             )
 
@@ -121,11 +123,12 @@ viewJudging wrapGame shared config users _ stage =
 viewComplete : (Game.Msg -> msg) -> Shared -> Config -> Dict User.Id User -> Round -> Round.Complete -> List (Html msg)
 viewComplete wrapGame shared config users _ stage =
     let
-        potential id { play, playedBy, likes } =
+        potential id { play, playedBy, likes, votes } =
             ( id
             , { play = Just play
               , playedBy = Just playedBy
               , likes = likes
+              , votes = votes
               }
             )
 
@@ -210,7 +213,7 @@ farDistance =
 
 
 viewPlay : (Game.Msg -> msg) -> Shared -> Config -> Int -> Float -> Maybe User -> Bool -> Maybe Play.Id -> Round.LikeDetail -> Play.Id -> Play.Potential -> Html msg
-viewPlay wrapGame shared config slotCount angle playedByUser isWinner picked likeDetail playId { play, likes } =
+viewPlay wrapGame shared config slotCount angle playedByUser isWinner picked likeDetail playId { play, likes, votes } =
     let
         isLiked =
             likeDetail.liked |> Set.member playId
@@ -229,6 +232,7 @@ viewPlay wrapGame shared config slotCount angle playedByUser isWinner picked lik
                 (List.filterMap identity
                     [ Icon.view Icon.win |> Maybe.justIf isWinner
                     , playedByUser |> Maybe.map (.name >> Html.text)
+                    , votes |> Maybe.map (\v -> Strings.VoteCount { votes = v } |> Lang.html shared)
                     , likes |> Maybe.map (\l -> Strings.Likes { total = l } |> Lang.html shared)
                     ]
                 )

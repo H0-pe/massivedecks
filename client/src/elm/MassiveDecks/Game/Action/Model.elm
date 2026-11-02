@@ -7,6 +7,7 @@ type Action
     | Submit
     | TakeBack
     | Judge
+    | Vote
     | Like
     | Advance
     | Discard

@@ -1,5 +1,6 @@
 import type {
   ComedyWriter,
+  GodIsDead,
   NeverHaveIEver,
   PackingHeat,
   Reboot,
@@ -21,6 +22,7 @@ export interface HouseRules {
   happyEnding?: HappyEnding.HappyEnding;
   czarChoices?: CzarChoices.CzarChoices;
   winnersPick?: WinnersPick.WinnersPick;
+  godIsDead?: GodIsDead;
 }
 
 /**
@@ -35,6 +37,7 @@ export interface Public {
   happyEnding?: HappyEnding.HappyEnding;
   czarChoices?: CzarChoices.CzarChoices;
   winnersPick?: WinnersPick.WinnersPick;
+  godIsDead?: GodIsDead;
 }
 
 export const censor = (houseRules: HouseRules): Public => ({

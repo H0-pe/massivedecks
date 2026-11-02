@@ -1,4 +1,4 @@
-# Massive Decks im Homelab (CT100). Server = offizielles Image, Client = aus diesem Fork gebaut.
+# Massive Decks im Homelab (CT100). Server und Client werden aus diesem Fork gebaut.
 # Aufruf aus /opt/massivedecks (dort liegt die .env mit MD_SECRET, der Fork ist nach ./src geklont):
 #   docker compose -p massivedecks -f src/deployment/homelab/compose.yaml --env-file .env up -d --build
 # Spieldaten liegen im RAM des Servers: Neustart des Containers beendet laufende Lobbys.
@@ -10,7 +10,12 @@ networks:
 
 services:
   server:
-    image: "ghcr.io/lattyware/massivedecks/server:latest-release"
+    # Aus diesem Fork gebaut: enthält die Hausregel „God Is Dead“ (Abstimmen statt Kartenzar).
+    build:
+      context: ../../server
+      args:
+        VERSION: homelab
+    image: "massivedecks-server:homelab"
     container_name: massivedecks-server
     environment:
       - NODE_ENV=production

@@ -213,7 +213,13 @@ export class Game {
     }
     const playersInRound = new Set(
       wu(playerOrder).filter((id) =>
-        Game.isPlayerInRound(czar, playerMap, id, users[id] as User.User),
+        Game.isPlayerInRound(
+          czar,
+          playerMap,
+          id,
+          users[id] as User.User,
+          rules.houseRules.godIsDead !== undefined,
+        ),
       ),
     );
     let round: Round.Starting | Round.Playing;
@@ -302,6 +308,7 @@ export class Game {
           this.players,
           id,
           lobby.users[id] as User.User,
+          this.rules.houseRules.godIsDead !== undefined,
         ),
       ),
     );
@@ -370,8 +377,10 @@ export class Game {
     players: { [id: string]: Player.Player },
     playerId: User.Id,
     user: User.User,
+    czarPlays: boolean,
   ): boolean {
-    if (playerId === czar || user.role !== "Player") {
+    // With "God Is Dead" the czar only reads out the plays, so they play too.
+    if ((playerId === czar && !czarPlays) || user.role !== "Player") {
       return false;
     }
     const player = players[playerId];

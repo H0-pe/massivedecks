@@ -96,6 +96,10 @@ export class Complete extends Base<"Complete"> {
   public readonly call: Card.Call;
   public readonly plays: StoredPlay.Revealed[];
   public readonly winner: User.Id;
+  /**
+   * The number of votes for each play, if the round was decided by vote ("God Is Dead").
+   */
+  public readonly votes?: { [play: string]: number };
 
   public constructor(
     id: Id,
@@ -103,6 +107,7 @@ export class Complete extends Base<"Complete"> {
     call: Card.Call,
     plays: StoredPlay.Revealed[],
     winner: User.Id,
+    votes?: { [play: string]: number },
   ) {
     super();
     this.id = id;
@@ -110,6 +115,13 @@ export class Complete extends Base<"Complete"> {
     this.call = call;
     this.plays = plays;
     this.winner = winner;
+    if (votes !== undefined) {
+      this.votes = votes;
+    }
+  }
+
+  private votesFor(play: Play.Id): { votes?: number } {
+    return this.votes === undefined ? {} : { votes: this.votes[play] ?? 0 };
   }
 
   public waitingFor(): Set<User.Id> | null {
@@ -138,6 +150,7 @@ export class Complete extends Base<"Complete"> {
         ...(roundPlay.likes.length > 0
           ? { likes: roundPlay.likes.length }
           : {}),
+        ...this.votesFor(roundPlay.id),
       };
     }
     return obj;
@@ -152,6 +165,7 @@ export class Complete extends Base<"Complete"> {
         ...(roundPlay.likes.length > 0
           ? { likes: roundPlay.likes.length }
           : {}),
+        ...this.votesFor(roundPlay.id),
       };
     }
     return obj;
@@ -165,6 +179,7 @@ export class Complete extends Base<"Complete"> {
       call: this.call,
       plays: this.plays,
       winner: this.winner,
+      ...(this.votes !== undefined ? { votes: this.votes } : {}),
     };
   }
 }
@@ -184,6 +199,11 @@ export class Judging extends Base<"Judging"> implements Timed {
   public readonly call: Card.Call;
   public readonly plays: StoredPlay.Revealed[];
   public timedOut: boolean;
+  /**
+   * Votes cast so far with "God Is Dead": who voted for which play. Players may change their vote until the round is
+   * decided, so only the latest vote per player is kept.
+   */
+  public readonly votes: Map<User.Id, Play.Id>;
 
   public constructor(
     id: Id,
@@ -191,6 +211,7 @@ export class Judging extends Base<"Judging"> implements Timed {
     call: Card.Call,
     plays: StoredPlay.Revealed[],
     timedOut = false,
+    votes: Map<User.Id, Play.Id> = new Map(),
   ) {
     super();
     this.id = id;
@@ -198,6 +219,7 @@ export class Judging extends Base<"Judging"> implements Timed {
     this.call = call;
     this.plays = plays;
     this.timedOut = timedOut;
+    this.votes = votes;
   }
 
   public start(
@@ -222,8 +244,18 @@ export class Judging extends Base<"Judging"> implements Timed {
     };
   }
 
-  public advance(winner: User.Id): Complete {
-    return new Complete(this.id, this.czar, this.call, this.plays, winner);
+  public advance(
+    winner: User.Id,
+    votes?: { [play: string]: number },
+  ): Complete {
+    return new Complete(
+      this.id,
+      this.czar,
+      this.call,
+      this.plays,
+      winner,
+      votes,
+    );
   }
 
   public waitingFor(): Set<User.Id> | null {
@@ -239,6 +271,7 @@ export class Judging extends Base<"Judging"> implements Timed {
       call: this.call,
       plays: Array.from(this.revealedPlays()),
       ...(this.timedOut ? { timedOut: true } : {}),
+      ...(this.votes.size > 0 ? { voted: Array.from(this.votes.keys()) } : {}),
       startedAt: this.startedAt,
     };
   }
@@ -260,6 +293,7 @@ export class Judging extends Base<"Judging"> implements Timed {
       call: this.call,
       plays: this.plays,
       timedOut: this.timedOut,
+      votes: Object.fromEntries(this.votes),
     };
   }
 }
@@ -650,8 +684,15 @@ export const fromJSON = (r: Round): Round => {
     case "Revealing":
       return new Revealing(r.id, r.czar, r.call, r.plays, r.timedOut);
     case "Judging":
-      return new Judging(r.id, r.czar, r.call, r.plays, r.timedOut);
+      return new Judging(
+        r.id,
+        r.czar,
+        r.call,
+        r.plays,
+        r.timedOut,
+        new Map(Object.entries(r.votes ?? {})),
+      );
     case "Complete":
-      return new Complete(r.id, r.czar, r.call, r.plays, r.winner);
+      return new Complete(r.id, r.czar, r.call, r.plays, r.winner, r.votes);
   }
 };

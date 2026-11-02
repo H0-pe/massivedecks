@@ -23,6 +23,7 @@ type Msg
     | PickPlay Play.Id
     | Reveal Play.Id
     | Judge
+    | Vote
     | Like
     | ScrollToTop
     | SetPlayStyles PlayStyles

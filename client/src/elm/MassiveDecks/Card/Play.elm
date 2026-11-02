@@ -32,6 +32,7 @@ type alias Play =
 type alias Details =
     { playedBy : User.Id
     , likes : Maybe Int
+    , votes : Maybe Int
     }
 
 
@@ -41,6 +42,7 @@ type alias WithDetails =
     { play : List Card.Response
     , playedBy : User.Id
     , likes : Maybe Int
+    , votes : Maybe Int
     }
 
 
@@ -50,6 +52,7 @@ type alias Potential =
     { play : Maybe (List Card.Response)
     , playedBy : Maybe User.Id
     , likes : Maybe Int
+    , votes : Maybe Int
     }
 
 

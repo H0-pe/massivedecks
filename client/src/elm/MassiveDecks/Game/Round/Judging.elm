@@ -29,16 +29,44 @@ view wrap auth shared users config round =
         stage =
             round.stage
 
+        voting =
+            config.rules.houseRules.godIsDead /= Nothing
+
+        -- Everyone who could vote, to show progress. Computer players and spectators don't vote.
+        voters =
+            users
+                |> Dict.values
+                |> List.filter (\u -> u.role == User.Player && u.presence == User.Joined && u.control == User.Human)
+                |> List.length
+
+        canVoteFor play =
+            Just play /= stage.likeDetail.played
+
         { action, msg, instruction, isCzar } =
-            case role of
-                Player.RCzar ->
+            case ( voting, role ) of
+                ( True, _ ) ->
+                    { action =
+                        stage.pick
+                            |> Maybe.andThen (\p -> Action.Vote |> Maybe.justIf (canVoteFor p && stage.vote /= Just p))
+                    , msg = \p -> p |> PickPlay |> wrap |> Maybe.justIf (canVoteFor p)
+                    , instruction =
+                        case stage.vote of
+                            Just _ ->
+                                Strings.VotedInstruction { voted = Set.size stage.voted, total = voters }
+
+                            Nothing ->
+                                Strings.VoteInstruction
+                    , isCzar = False
+                    }
+
+                ( False, Player.RCzar ) ->
                     { action = Maybe.map (always Action.Judge) stage.pick
                     , msg = \p -> p |> PickPlay |> wrap |> Just
                     , instruction = Strings.RevealPlaysInstruction
                     , isCzar = True
                     }
 
-                Player.RPlayer ->
+                ( False, Player.RPlayer ) ->
                     let
                         canBeLiked play =
                             Just play /= stage.likeDetail.played && not (Set.member play stage.likeDetail.liked)

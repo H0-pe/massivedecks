@@ -62,7 +62,7 @@ viewRound shared config users round =
                 |> Maybe.withDefault Dict.empty
 
         byLine =
-            { by = round.czar, specialRole = Just Plays.Czar, likes = Nothing }
+            { by = round.czar, specialRole = Just Plays.Czar, likes = Nothing, votes = Nothing }
     in
     ( Round.idString round.id
     , Html.li [ HtmlA.class "historic-round" ]
@@ -79,14 +79,14 @@ viewRound shared config users round =
 
 
 viewPlay : Shared -> Config -> Dict User.Id User -> User.Id -> ( Play.Id, Play.WithDetails ) -> ( String, Html msg )
-viewPlay shared config users winner ( id, { play, playedBy, likes } ) =
+viewPlay shared config users winner ( id, { play, playedBy, likes, votes } ) =
     let
         cards =
             play |> List.map (\r -> ( r.details.id, Html.li [] [ Response.view shared config Card.Front [] r ] ))
     in
     ( id
     , Html.li [ HtmlA.class "with-byline" ]
-        [ Plays.viewByLine shared users (Plays.ByLine playedBy (Plays.Winner |> Maybe.justIf (winner == playedBy)) likes)
+        [ Plays.viewByLine shared users (Plays.ByLine playedBy (Plays.Winner |> Maybe.justIf (winner == playedBy)) likes votes)
         , HtmlK.ol [ HtmlA.class "play card-set" ] cards
         ]
     )

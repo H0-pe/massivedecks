@@ -32,7 +32,10 @@ class PlayerActions extends Actions.Group<
     lobby: Lobby.WithActiveGame,
     action: Player,
   ): lobby is Lobby.WithActiveGame {
-    GameAction.expectRole(auth, action, lobby.game, "Player");
+    // With "God Is Dead" the czar only reads out the plays and plays like everyone else.
+    if (lobby.game.rules.houseRules.godIsDead === undefined) {
+      GameAction.expectRole(auth, action, lobby.game, "Player");
+    }
     return true;
   }
 }

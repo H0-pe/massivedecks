@@ -462,6 +462,7 @@ houseRules =
         |> Json.optional "happyEnding" (happyEnding |> Json.map Just) Nothing
         |> Json.optional "czarChoices" (czarChoices |> Json.map Just) Nothing
         |> Json.optional "winnersPick" (winnersPick |> Json.map Just) Nothing
+        |> Json.optional "godIsDead" (godIsDead |> Json.map Just) Nothing
 
 
 comedyWriter : Json.Decoder Rules.ComedyWriter
@@ -495,6 +496,11 @@ czarChoices =
 
 winnersPick : Json.Decoder Rules.WinnersPick
 winnersPick =
+    {} |> Json.succeed
+
+
+godIsDead : Json.Decoder Rules.GodIsDead
+godIsDead =
     {} |> Json.succeed
 
 
@@ -748,6 +754,9 @@ eventByName name =
         "PlayLiked" ->
             gameEvent playLiked
 
+        "VoteCast" ->
+            gameEvent voteCast
+
         "StartRevealing" ->
             timedGameEvent startRevealing
 
@@ -863,9 +872,10 @@ roundFinished =
 
 playDetails : Json.Decoder Play.Details
 playDetails =
-    Json.map2 Play.Details
+    Json.map3 Play.Details
         (Json.field "playedBy" userId)
         (Json.maybe (Json.field "likes" Json.int))
+        (Json.maybe (Json.field "votes" Json.int))
 
 
 playRevealed : Json.Decoder Events.TimedGameEvent
@@ -916,6 +926,12 @@ playTakenBack : Json.Decoder Events.GameEvent
 playTakenBack =
     Json.map (\by -> Events.PlayTakenBack { by = by })
         (Json.field "by" userId)
+
+
+voteCast : Json.Decoder Events.GameEvent
+voteCast =
+    Json.map (\voter -> Events.VoteCast { player = voter })
+        (Json.field "player" userId)
 
 
 playLiked : Json.Decoder Events.GameEvent
@@ -1312,6 +1328,9 @@ judgingRound ld =
         |> Json.required "call" call
         |> Json.required "plays" (Json.list knownPlay)
         |> Json.optional "timedOut" Json.bool False
+        |> Json.optional "voted" (Json.list userId |> Json.map Set.fromList) Set.empty
+        -- Who this user voted for isn't part of the public state.
+        |> Json.hardcoded Nothing
 
 
 completeRound : Maybe Round.LikeDetail -> Json.Decoder Round.Complete
@@ -1329,6 +1348,7 @@ playWithDetails =
         |> Json.required "play" (Json.list response)
         |> Json.required "playedBy" userId
         |> Json.optional "likes" (Json.int |> Json.map Just) Nothing
+        |> Json.optional "votes" (Json.int |> Json.map Just) Nothing
 
 
 playerRole : Json.Decoder Player.Role

@@ -60,6 +60,9 @@ export const Schema = {
           $ref: "#/definitions/Like",
         },
         {
+          $ref: "#/definitions/Vote",
+        },
+        {
           $ref: "#/definitions/Configure",
         },
         {
@@ -475,6 +478,28 @@ export const Schema = {
       required: ["action"],
       type: "object",
     },
+    Vote: {
+      additionalProperties: false,
+      description:
+        'A player votes for the best play ("God Is Dead" house rule). Voting again replaces the earlier vote.',
+      properties: {
+        action: {
+          enum: ["Vote"],
+          type: "string",
+        },
+        play: {
+          $ref: "#/definitions/Id",
+        },
+      },
+      required: ["action", "play"],
+      type: "object",
+    },
+    GodIsDead: {
+      additionalProperties: false,
+      description:
+        'Configuration for the "God Is Dead" house rule. There is no card czar judging: everyone plays, then all players vote for the best play.',
+      type: "object",
+    },
     Like: {
       additionalProperties: false,
       description: "A player or spectator likes a play.",
@@ -678,6 +703,9 @@ export const Schema = {
         },
         czarChoices: {
           $ref: "#/definitions/CzarChoices",
+        },
+        godIsDead: {
+          $ref: "#/definitions/GodIsDead",
         },
         happyEnding: {
           $ref: "#/definitions/HappyEnding",

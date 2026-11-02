@@ -13,6 +13,7 @@ import * as Like from "./game-action/like.js";
 import * as PlayerAction from "./game-action/player.js";
 import * as Redraw from "./game-action/redraw.js";
 import * as SetPresence from "./game-action/set-presence.js";
+import * as Vote from "./game-action/vote.js";
 
 /**
  * An action only a player can perform.
@@ -23,7 +24,8 @@ export type GameAction =
   | Redraw.Redraw
   | EnforceTimeLimit.EnforceTimeLimit
   | SetPresence.SetPresence
-  | Like.Like;
+  | Like.Like
+  | Vote.Vote;
 
 class GameActions extends Actions.Group<
   Action.Action,
@@ -39,6 +41,7 @@ class GameActions extends Actions.Group<
       EnforceTimeLimit.actions,
       SetPresence.actions,
       Like.actions,
+      Vote.actions,
     );
   }
 

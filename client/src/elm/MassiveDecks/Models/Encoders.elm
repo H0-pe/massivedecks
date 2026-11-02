@@ -124,6 +124,7 @@ houseRules h =
             , h.happyEnding |> Maybe.map (\e -> ( "happyEnding", happyEnding e ))
             , h.czarChoices |> Maybe.map (\c -> ( "czarChoices", czarChoices c ))
             , h.winnersPick |> Maybe.map (\w -> ( "winnersPick", winnersPick w ))
+            , h.godIsDead |> Maybe.map (\_ -> ( "godIsDead", Json.object [] ))
             ]
         )
 

@@ -376,6 +376,27 @@ translate _ mdString =
         HouseRuleWinnersPick ->
             [ Text "Decisión del ganador" ]
 
+        HouseRuleGodIsDead ->
+            [ Missing ]
+
+        HouseRuleGodIsDeadDescription ->
+            [ Missing ]
+
+        VoteInstruction ->
+            [ Missing ]
+
+        VotedInstruction _ ->
+            [ Missing ]
+
+        VoteForPlay ->
+            [ Missing ]
+
+        VoteCount _ ->
+            [ Missing ]
+
+        TvVoting _ ->
+            [ Missing ]
+
         HouseRuleWinnersPickDescription ->
             [ Text "El ganador de cada ronda será el ", ref Czar, Text " durante la próxima ronda." ]
 

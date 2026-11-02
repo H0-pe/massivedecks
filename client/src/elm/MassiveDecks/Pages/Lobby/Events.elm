@@ -53,6 +53,7 @@ type GameEvent
     | PlaySubmitted { by : User.Id }
     | PlayTakenBack { by : User.Id }
     | PlayLiked { play : Play.Id }
+    | VoteCast { player : User.Id }
     | PlayerAway { player : User.Id }
     | PlayerBack { player : User.Id }
     | Timed TimedState

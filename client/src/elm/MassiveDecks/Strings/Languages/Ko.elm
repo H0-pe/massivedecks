@@ -362,6 +362,27 @@ translate _ mdString =
         HouseRuleWinnersPick ->
             [ Text "승자의 선택" ]
 
+        HouseRuleGodIsDead ->
+            [ Missing ]
+
+        HouseRuleGodIsDeadDescription ->
+            [ Missing ]
+
+        VoteInstruction ->
+            [ Missing ]
+
+        VotedInstruction _ ->
+            [ Missing ]
+
+        VoteForPlay ->
+            [ Missing ]
+
+        VoteCount _ ->
+            [ Missing ]
+
+        TvVoting _ ->
+            [ Missing ]
+
         HouseRuleWinnersPickDescription ->
             [ Text "각 라운드의 승자는 다음 라운드에 ", ref Czar, Text "가 됩니다." ]
 

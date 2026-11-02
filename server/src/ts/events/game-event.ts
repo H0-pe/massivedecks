@@ -14,6 +14,7 @@ import type { RoundStarted } from "./game-event/round-started.js";
 import type { StageTimerDone } from "./game-event/stage-timer-done.js";
 import type { StartJudging } from "./game-event/start-judging.js";
 import type { StartRevealing } from "./game-event/start-revealing.js";
+import type { VoteCast } from "./game-event/vote-cast.js";
 
 export type GameEvent =
   | GameStarted
@@ -31,4 +32,5 @@ export type GameEvent =
   | PauseStateChanged
   | StageTimerDone
   | GameEnded
-  | PlayLiked;
+  | PlayLiked
+  | VoteCast;

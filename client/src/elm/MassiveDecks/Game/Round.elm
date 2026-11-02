@@ -234,6 +234,8 @@ type alias Judging =
     , call : Card.Call
     , plays : List Play.Known
     , timedOut : Bool
+    , voted : Set User.Id
+    , vote : Maybe Play.Id
     }
 
 

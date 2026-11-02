@@ -76,6 +76,7 @@ fake =
             , happyEnding = Nothing
             , czarChoices = Nothing
             , winnersPick = Nothing
+            , godIsDead = Nothing
             }
         , stages =
             { mode = Rules.Soft

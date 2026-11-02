@@ -39,6 +39,7 @@ type alias ByLine =
     { by : User.Id
     , specialRole : Maybe SpecialRole
     , likes : Maybe Int
+    , votes : Maybe Int
     }
 
 
@@ -60,7 +61,7 @@ view shared users classes liked picked details =
 {-| Create a byline.
 -}
 viewByLine : Shared -> Dict User.Id User -> ByLine -> Html msg
-viewByLine shared users { by, specialRole, likes } =
+viewByLine shared users { by, specialRole, likes, votes } =
     let
         roleIcon role =
             let
@@ -80,6 +81,8 @@ viewByLine shared users { by, specialRole, likes } =
         contents =
             [ specialRole |> Maybe.map roleIcon
             , Html.span [ HtmlA.class "name" ] [ Html.text name ] |> Just
+            , votes
+                |> Maybe.map (\v -> Html.span [ HtmlA.class "votes" ] [ Strings.VoteCount { votes = v } |> Lang.html shared ])
             , likes
                 |> Maybe.map (\l -> Html.span [ HtmlA.class "likes" ] [ Strings.Likes { total = l } |> Lang.html shared ])
             ]

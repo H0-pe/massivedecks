@@ -62,7 +62,7 @@ view wrap shared nextRoundReady config users round =
 
 
 details : Shared -> Config -> User.Id -> (Play.Id -> Maybe msg) -> ( Play.Id, Play.WithDetails ) -> Plays.Details msg
-details shared config winner maybeMsg ( id, { play, playedBy, likes } ) =
+details shared config winner maybeMsg ( id, { play, playedBy, likes, votes } ) =
     let
         cards =
             play |> List.map (\r -> Html.li [] [ Response.view shared config Card.Front [] r ])
@@ -75,6 +75,6 @@ details shared config winner maybeMsg ( id, { play, playedBy, likes } ) =
                 Nothing
 
         byLine =
-            Plays.ByLine playedBy specialRole likes
+            Plays.ByLine playedBy specialRole likes votes
     in
     Plays.Details id cards (id |> maybeMsg) (Just byLine)

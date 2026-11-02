@@ -2,6 +2,7 @@ import { dealWithLostPlayer } from "../action/game-action/set-presence.js";
 import * as Event from "../event.js";
 import * as StageTimerDone from "../events/game-event/stage-timer-done.js";
 import * as Round from "../games/game/round.js";
+import * as GodIsDead from "../games/rules/god-is-dead.js";
 import type { Stages } from "../games/rules.js";
 import type * as Rules from "../games/rules.js";
 import type * as Lobby from "../lobby.js";
@@ -90,6 +91,16 @@ export const handle: Timeout.Handler<RoundStageTimerDone> = (
     return {};
   }
   gameRound.timedOut = true;
+  if (
+    gameRound.stage === "Judging" &&
+    game.rules.houseRules.godIsDead !== undefined
+  ) {
+    // Nobody is "lost" when voting runs out of time: decide with the votes cast so far.
+    return GodIsDead.tally(
+      lobby as Lobby.WithActiveGame,
+      gameRound as Round.Judging,
+    );
+  }
   switch (stages.timeLimitMode) {
     case "Soft":
       return {
