@@ -635,3 +635,9 @@ a:has(> .ui-list-item) {
     display: none;
   }
 }
+
+// The browser's own clear button in search fields doesn't match the design.
+.ui-field input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}

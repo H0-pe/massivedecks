@@ -442,6 +442,12 @@ translate _ mdString =
         NoMatchingDecks ->
             [ Text "No decks match." ]
 
+        AddAllDecks { count } ->
+            [ Text "Add all (", count |> String.fromInt |> Text, Text ")" ]
+
+        InvertDeckSelection ->
+            [ Text "Invert selection" ]
+
         TvEveryoneVotes ->
             [ Text "Everyone votes" ]
 

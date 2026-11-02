@@ -65,6 +65,18 @@ view wrap shared existing browser =
         addedCount =
             all |> List.filter isAdded |> List.length
 
+        ( shownAdded, shownNotAdded ) =
+            shown |> List.partition isAdded
+
+        bulkButton label icon change =
+            Html.button
+                [ HtmlA.type_ "button"
+                , HtmlA.class "ui-button text dense"
+                , HtmlA.disabled (List.isEmpty change.add && List.isEmpty change.remove)
+                , Change change |> wrap |> HtmlE.onClick
+                ]
+                [ Icon.view icon, Html.span [] [ label |> Lang.html shared ] ]
+
         filterButton filter label =
             let
                 selected =
@@ -160,7 +172,15 @@ view wrap shared existing browser =
                         ]
                     )
                 ]
-            , Html.p [ HtmlA.class "deck-browser-count" ] [ Strings.DeckCount { count = List.length shown } |> Lang.html shared ]
+            , Html.div [ HtmlA.class "deck-browser-bulk" ]
+                [ Html.p [ HtmlA.class "deck-browser-count" ] [ Strings.DeckCount { count = List.length shown } |> Lang.html shared ]
+                , bulkButton (Strings.AddAllDecks { count = List.length shownNotAdded })
+                    Icon.add
+                    { add = shownNotAdded |> List.map .source, remove = [] }
+                , bulkButton Strings.InvertDeckSelection
+                    Icon.invert
+                    { add = shownNotAdded |> List.map .source, remove = shownAdded |> List.map .source }
+                ]
             , list
             ]
         ]

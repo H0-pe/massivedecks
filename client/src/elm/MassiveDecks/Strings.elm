@@ -147,6 +147,8 @@ type MdString
     | AddDeckShort -- A short button label: add this deck to the game.
     | DeckInGame -- A short button label on a deck that is in the game (pressing it removes it).
     | NoMatchingDecks -- The deck browser has nothing to show for the search and filter.
+    | AddAllDecks { count : Int } -- Adds every deck the browser currently lists (and isn't in the game yet).
+    | InvertDeckSelection -- Adds the listed decks that aren't in the game and removes those that are.
     | GameReader { name : String } -- In the game's status line: who reads the answers out this round.
     | PointsShort { points : Int } -- A short unit after a player's points, e.g. "pts".
     | TvPickAnswers -- The TV's headline while players pick their answers.

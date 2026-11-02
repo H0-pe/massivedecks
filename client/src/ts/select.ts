@@ -142,6 +142,10 @@ const style = `
   outline: none;
 }
 
+.filter::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
 .filter:focus {
   border-color: var(--md-primary);
 }

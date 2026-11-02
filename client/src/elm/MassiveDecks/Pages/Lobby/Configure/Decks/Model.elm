@@ -94,6 +94,7 @@ type Msg
     | Add Source.External
     | Remove Int
     | Toggle Source.External
+    | Change { add : List Source.External, remove : List Source.External }
     | OpenBrowser
     | CloseBrowser
     | SetBrowserQuery String

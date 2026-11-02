@@ -254,6 +254,11 @@ host =
     Icon.crown
 
 
+invert : Icon WithoutId
+invert =
+    Icon.rightLeft
+
+
 edit : Icon WithoutId
 edit =
     Icon.penToSquare

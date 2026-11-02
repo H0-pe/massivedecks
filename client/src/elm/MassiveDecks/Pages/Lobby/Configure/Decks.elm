@@ -112,6 +112,29 @@ update shared existing msg model =
                     in
                     ( model, newShared, cmd )
 
+        Change change ->
+            let
+                -- Remove from the end so earlier indices stay valid, then append the new decks.
+                removals =
+                    existing
+                        |> List.indexedMap Tuple.pair
+                        |> List.filter (\( _, d ) -> change.remove |> List.any (Source.equals d.source))
+                        |> List.map Tuple.first
+                        |> List.reverse
+                        |> List.concatMap removeDeck
+
+                additions =
+                    change.add |> List.concatMap addDeck
+
+                patch =
+                    removals ++ additions
+            in
+            if List.isEmpty patch then
+                ( model, shared, Cmd.none )
+
+            else
+                ( model, shared, Actions.configure patch )
+
         OpenBrowser ->
             ( { model | browser = Just { query = "", filter = AllDecks } }, shared, Cmd.none )
 

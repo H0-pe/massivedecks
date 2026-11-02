@@ -428,6 +428,12 @@ translate _ mdString =
         NoMatchingDecks ->
             [ Missing ]
 
+        AddAllDecks _ ->
+            [ Missing ]
+
+        InvertDeckSelection ->
+            [ Missing ]
+
         TvEveryoneVotes ->
             [ Missing ]
 

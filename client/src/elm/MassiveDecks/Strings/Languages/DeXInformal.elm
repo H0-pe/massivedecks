@@ -484,6 +484,12 @@ translate _ mdString =
         NoMatchingDecks ->
             [ Text "Keine passenden Decks." ]
 
+        AddAllDecks { count } ->
+            [ Text "Alle hinzufügen (", count |> String.fromInt |> Text, Text ")" ]
+
+        InvertDeckSelection ->
+            [ Text "Auswahl umkehren" ]
+
         TvEveryoneVotes ->
             [ Text "Alle stimmen ab" ]
 
