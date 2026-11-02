@@ -1278,7 +1278,7 @@ viewRound wrap shared auth timeAnchor config users model =
             Nothing ->
                 Html.nothing
         , timer timeAnchor model
-        , Html.div [ HtmlA.class "top-row" ] [ minorActions wrap shared auth game model.helpVisible ]
+        , Html.div [ HtmlA.class "top-row" ] (minorActions wrap shared auth game model.helpVisible :: viewStatus shared auth users model)
         ]
     , Html.div (HtmlA.class "round" :: roundAttrs) [ renderedCall, Action.view wrap shared action ]
     , content
@@ -1288,6 +1288,46 @@ viewRound wrap shared auth timeAnchor config users model =
     , Html.div [ HtmlA.class "scroll-top" ]
         [ IconButton.view (Icon.toTop |> Icon.view) (Strings.ScrollToTop |> Lang.string shared) (ScrollToTop |> wrap |> Just) ]
     , renderDiscarded wrap shared config users model.discarded |> Maybe.withDefault Html.nothing
+    ]
+
+
+{-| Which round it is, who reads the answers out, and your points.
+-}
+viewStatus : Shared -> Lobby.Auth -> Dict User.Id User -> Model -> List (Html msg)
+viewStatus shared auth users model =
+    let
+        game =
+            model.game
+
+        -- A finished round is already part of the history.
+        roundNumber =
+            case game.round.stage of
+                Round.C _ ->
+                    max 1 (List.length game.history)
+
+                _ ->
+                    List.length game.history + 1
+
+        reader =
+            users |> Dict.get game.round.czar |> Maybe.map .name |> Maybe.withDefault "?"
+
+        score =
+            game.players
+                |> Dict.get auth.claims.uid
+                |> Maybe.map
+                    (\p ->
+                        Html.span [ HtmlA.class "game-status-score" ]
+                            [ Html.text (String.fromInt p.score)
+                            , Html.span [] [ Strings.PointsShort { points = p.score } |> Lang.html shared ]
+                            ]
+                    )
+                |> Maybe.withDefault (Html.span [] [])
+    in
+    [ Html.div [ HtmlA.class "game-status" ]
+        [ Html.span [ HtmlA.class "game-status-round" ] [ Strings.TvRound { round = roundNumber } |> Lang.html shared ]
+        , Html.span [ HtmlA.class "game-status-reader" ] [ Strings.GameReader { name = reader } |> Lang.html shared ]
+        ]
+    , score
     ]
 
 

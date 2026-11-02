@@ -410,6 +410,60 @@ translate _ mdString =
         TvVoting _ ->
             [ Missing ]
 
+        GameReader _ ->
+            [ Missing ]
+
+        PointsShort _ ->
+            [ Missing ]
+
+        TvEveryoneVotes ->
+            [ Missing ]
+
+        TvPickAnswers ->
+            [ Missing ]
+
+        TvRound _ ->
+            [ Missing ]
+
+        TvFirstTo _ ->
+            [ Missing ]
+
+        TvStatusPlayed ->
+            [ Missing ]
+
+        TvStatusVoted ->
+            [ Missing ]
+
+        TvStatusThinking ->
+            [ Missing ]
+
+        TvStatusReading ->
+            [ Missing ]
+
+        TvRoundWinnerLabel _ ->
+            [ Missing ]
+
+        TvTheVotes ->
+            [ Missing ]
+
+        TvTheAnswers ->
+            [ Missing ]
+
+        TvStandings ->
+            [ Missing ]
+
+        TvHeadlinePhone ->
+            [ Missing ]
+
+        TvHeadlineFriendship ->
+            [ Missing ]
+
+        TvScanToJoin ->
+            [ Missing ]
+
+        TvWaitingForMore ->
+            [ Missing ]
+
         TvCzarPicking _ ->
             [ Missing ]
 

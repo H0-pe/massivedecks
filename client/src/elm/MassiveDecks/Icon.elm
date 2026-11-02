@@ -249,6 +249,11 @@ czar =
     Icon.gavel
 
 
+host : Icon WithoutId
+host =
+    Icon.crown
+
+
 edit : Icon WithoutId
 edit =
     Icon.penToSquare

@@ -1,4 +1,5 @@
 @use "../../_colors";
+@use "../../_fonts";
 
 .configure {
   padding: 1em;
@@ -347,5 +348,76 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 0.25em;
+  }
+}
+
+// Settings sections as a row of pills.
+.configure .config-tabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.875rem 0;
+  margin-bottom: 0.5rem;
+
+  button {
+    flex: none;
+    height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: 999px;
+    border: 2px solid colors.$line;
+    background: transparent;
+    color: colors.$text;
+    font-family: fonts.$general;
+    font-weight: 800;
+    font-size: 0.9375rem;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover {
+      border-color: colors.$line-strong;
+    }
+
+    &.selected {
+      background: colors.$primary;
+      border-color: colors.$primary;
+      color: colors.$on-primary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid colors.$text;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.configure .start-game-button {
+  width: 100%;
+  height: 3.5rem;
+  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  border: 0;
+  border-radius: 1rem;
+  background: colors.$primary;
+  color: colors.$on-primary;
+  font-family: fonts.$display;
+  font-size: 1.25rem;
+  cursor: pointer;
+
+  &:hover {
+    background: colors.$primary-light;
+  }
+
+  &:focus-visible {
+    outline: 3px solid colors.$text;
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    background: colors.$surface-raised;
+    color: colors.$text-faint;
+    cursor: default;
   }
 }

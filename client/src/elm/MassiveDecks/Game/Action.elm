@@ -3,6 +3,7 @@ module MassiveDecks.Game.Action exposing (view)
 import FontAwesome as Icon exposing (Icon)
 import Html exposing (Html)
 import Html.Attributes as HtmlA
+import Html.Events as HtmlE
 import MassiveDecks.Game.Action.Model exposing (..)
 import MassiveDecks.Game.Messages as Game exposing (Msg)
 import MassiveDecks.Icon as Icon
@@ -70,21 +71,29 @@ viewSingle wrap shared visible action =
         label =
             title |> Lang.string shared
 
-        -- The wrapper renders an extended FAB's label as a child the web component ignores, so set it directly.
-        extended =
-            case shortLabel action of
-                Just short ->
-                    [ HtmlA.attribute "extended" "", HtmlA.attribute "label" (short |> Lang.string shared) ]
-
-                Nothing ->
-                    []
+        exited =
+            visible /= Just action
     in
-    Fab.view
-        type_
-        label
-        (icon |> Icon.view)
-        (onClick |> wrap |> Just)
-        (HtmlA.classList [ ( "action", True ), ( "exited", visible /= Just action ) ] :: extended ++ attrs)
+    case shortLabel action of
+        -- The actions the game waits on get a labelled button.
+        Just short ->
+            Html.button
+                (HtmlA.classList [ ( "action", True ), ( "main-action", True ), ( "exited", exited ) ]
+                    :: HtmlA.type_ "button"
+                    :: HtmlA.title label
+                    :: HtmlA.disabled exited
+                    :: HtmlE.onClick (onClick |> wrap)
+                    :: attrs
+                )
+                [ icon |> Icon.view, Html.span [] [ short |> Lang.html shared ] ]
+
+        Nothing ->
+            Fab.view
+                type_
+                label
+                (icon |> Icon.view)
+                (onClick |> wrap |> Just)
+                (HtmlA.classList [ ( "action", True ), ( "exited", exited ) ] :: attrs)
 
 
 {-| A short label shown on the button for the actions the game is waiting on.

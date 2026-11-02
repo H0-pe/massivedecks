@@ -376,18 +376,78 @@ translate _ mdString =
             ]
 
         TvVoting { voted, total } ->
-            [ Text "Everyone votes · "
-            , voted |> String.fromInt |> Text
-            , Text "/"
+            [ voted |> String.fromInt |> Text
+            , Text " of "
             , total |> String.fromInt |> Text
+            , Text " voted"
             ]
+
+        GameReader { name } ->
+            [ Text name, Text " reads aloud" ]
+
+        PointsShort { points } ->
+            [ Text
+                (if points == 1 then
+                    "pt"
+
+                 else
+                    "pts"
+                )
+            ]
+
+        TvEveryoneVotes ->
+            [ Text "Everyone votes" ]
+
+        TvPickAnswers ->
+            [ Text "Pick your answers" ]
+
+        TvRound { round } ->
+            [ Text "Round ", round |> String.fromInt |> Text ]
+
+        TvFirstTo { points } ->
+            [ Text "first to ", points |> String.fromInt |> Text ]
+
+        TvStatusPlayed ->
+            [ Text "Played" ]
+
+        TvStatusVoted ->
+            [ Text "Voted" ]
+
+        TvStatusThinking ->
+            [ Text "Thinking…" ]
+
+        TvStatusReading ->
+            [ Text "Reads aloud" ]
+
+        TvRoundWinnerLabel { round } ->
+            [ Text "Round ", round |> String.fromInt |> Text, Text " · Winner" ]
+
+        TvTheVotes ->
+            [ Text "The votes" ]
+
+        TvTheAnswers ->
+            [ Text "The answers" ]
+
+        TvStandings ->
+            [ Text "Standings" ]
+
+        TvHeadlinePhone ->
+            [ Text "Grab your phone." ]
+
+        TvHeadlineFriendship ->
+            [ Text "Ruin a friendship." ]
+
+        TvScanToJoin ->
+            [ Text "or scan to join" ]
+
+        TvWaitingForMore ->
+            [ Text "waiting for more…" ]
 
         TvCzarPicking { name } ->
             [ Text name, Text " is picking a card…" ]
 
         TvPlaying { played, total } ->
-            [ Text "Pick your answers · "
-            , played |> String.fromInt |> Text
+            [ played |> String.fromInt |> Text
             , Text " of "
             , total |> String.fromInt |> Text
             , Text " played"

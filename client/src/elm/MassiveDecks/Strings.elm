@@ -132,9 +132,27 @@ type MdString
     | VotedInstruction { voted : Int, total : Int } -- Shown after voting: the vote can still be changed, and how many have voted.
     | VoteForPlay -- The action of voting for the selected play.
     | VoteCount { votes : Int } -- How many votes a play got.
-    | TvVoting { voted : Int, total : Int } -- Shown on the TV while everyone votes, with how many have voted.
+    | TvVoting { voted : Int, total : Int } -- How many have voted so far, on the TV.
+    | TvEveryoneVotes -- The TV's headline while everyone votes.
+    | GameReader { name : String } -- In the game's status line: who reads the answers out this round.
+    | PointsShort { points : Int } -- A short unit after a player's points, e.g. "pts".
+    | TvPickAnswers -- The TV's headline while players pick their answers.
+    | TvRound { round : Int } -- Which round this is, on the TV.
+    | TvFirstTo { points : Int } -- How many points win the game, on the TV.
+    | TvStatusPlayed -- Under a player's name on the TV: they have played.
+    | TvStatusVoted -- Under a player's name on the TV: they have voted.
+    | TvStatusThinking -- Under a player's name on the TV: they still have to play or vote.
+    | TvStatusReading -- Under the czar's name on the TV: they read the answers out.
+    | TvRoundWinnerLabel { round : Int } -- A small label above the round winner on the TV.
+    | TvTheVotes -- A heading for the answers and their votes at the end of a round on the TV.
+    | TvTheAnswers -- A heading for the answers at the end of a round on the TV (no voting).
+    | TvStandings -- A label for everyone's scores at the end of a round on the TV.
+    | TvHeadlinePhone -- First line of the TV waiting room's headline, telling people to get their phones out.
+    | TvHeadlineFriendship -- Second line of the TV waiting room's headline, a joke about the game.
+    | TvScanToJoin -- Under the QR code on the TV.
+    | TvWaitingForMore -- On the TV once some players have joined, inviting more.
     | TvCzarPicking { name : String } -- Shown on the TV while the named czar picks the black card.
-    | TvPlaying { played : Int, total : Int } -- Shown on the TV while players pick their answers, with how many have played.
+    | TvPlaying { played : Int, total : Int } -- How many have played so far, on the TV.
     | TvRevealing { name : String } -- Shown on the TV while the named player reveals and reads out the answers.
     | TvCzarJudging { name : String } -- Shown on the TV while the named czar picks the winning answer.
     | TvRoundWinner { name : String } -- Shown on the TV when the named player wins the round.

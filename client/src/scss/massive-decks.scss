@@ -36,14 +36,16 @@ body {
 }
 
 .game-code {
-  font-family: fonts.$game-code;
+  font-family: fonts.$display;
+  letter-spacing: 0.08em;
   .svg-inline--fa {
     margin-left: 0.3em;
   }
   white-space: nowrap;
-  color: #ffffff;
-  background-color: #000000;
-  padding: 0.1em 0.5em;
+  color: colors.$background;
+  background-color: colors.$text;
+  border-radius: 0.3em;
+  padding: 0.15em 0.5em;
 }
 
 h1 {

@@ -425,18 +425,71 @@ translate _ mdString =
             ]
 
         TvVoting { voted, total } ->
-            [ Text "Alle stimmen ab · "
-            , voted |> String.fromInt |> Text
-            , Text "/"
+            [ voted |> String.fromInt |> Text
+            , Text " von "
             , total |> String.fromInt |> Text
+            , Text " haben abgestimmt"
             ]
+
+        GameReader { name } ->
+            [ Text name, Text " liest vor" ]
+
+        PointsShort _ ->
+            [ Text "Pkt." ]
+
+        TvEveryoneVotes ->
+            [ Text "Alle stimmen ab" ]
+
+        TvPickAnswers ->
+            [ Text "Wählt eure Antworten" ]
+
+        TvRound { round } ->
+            [ Text "Runde ", round |> String.fromInt |> Text ]
+
+        TvFirstTo { points } ->
+            [ Text "Sieg bei ", points |> String.fromInt |> Text, Text " Punkten" ]
+
+        TvStatusPlayed ->
+            [ Text "Gespielt" ]
+
+        TvStatusVoted ->
+            [ Text "Abgestimmt" ]
+
+        TvStatusThinking ->
+            [ Text "Überlegt…" ]
+
+        TvStatusReading ->
+            [ Text "Liest vor" ]
+
+        TvRoundWinnerLabel { round } ->
+            [ Text "Runde ", round |> String.fromInt |> Text, Text " · Sieg" ]
+
+        TvTheVotes ->
+            [ Text "Die Stimmen" ]
+
+        TvTheAnswers ->
+            [ Text "Die Antworten" ]
+
+        TvStandings ->
+            [ Text "Punktestand" ]
+
+        TvHeadlinePhone ->
+            [ Text "Handys raus." ]
+
+        TvHeadlineFriendship ->
+            [ Text "Freundschaften ruinieren." ]
+
+        TvScanToJoin ->
+            [ Text "oder scannen und mitspielen" ]
+
+        TvWaitingForMore ->
+            [ Text "warten auf weitere…" ]
 
         TvCzarPicking { name } ->
             [ Text name, Text " wählt eine Karte…" ]
 
         TvPlaying { played, total } ->
-            [ Text "Wählt eure Antworten · "
-            , played |> String.fromInt |> Text
+            [ played |> String.fromInt |> Text
             , Text " von "
             , total |> String.fromInt |> Text
             , Text " haben gespielt"

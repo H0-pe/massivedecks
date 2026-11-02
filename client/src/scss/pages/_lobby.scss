@@ -31,8 +31,9 @@ $users-width: 18rem;
   justify-content: space-between;
   align-items: center;
 
-  color: card-colors.$call-color;
-  background-color: card-colors.$call-background;
+  color: colors.$text;
+  background-color: colors.$background;
+  border-bottom: 1px solid colors.$line;
 
   .left {
     display: flex;

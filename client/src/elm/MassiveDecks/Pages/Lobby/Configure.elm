@@ -59,7 +59,6 @@ import MassiveDecks.Util.NeList exposing (NeList(..))
 import Material.Button as Button
 import Material.Card as Card
 import Material.Fab as Fab
-import Material.Tabs as Tabs
 
 
 init : Shared -> Config -> Model
@@ -319,14 +318,7 @@ view wrap wrapLobby shared return disabledReason gameCode { lobby, configure } =
             , disabledReason
                 |> Message.view shared
                 |> Maybe.withDefault Html.nothing
-            , Tabs.view
-                { selected = model.tab
-                , change = ChangeTab >> wrap
-                , ids = tabs
-                , tab = tab shared
-                , equals = (==)
-                , stacked = False
-                }
+            , Html.nav [ HtmlA.class "config-tabs" ] (tabs |> List.map (viewTab wrap shared model.tab))
             , Html.div [] tabComponent
             , startGameSegment wrap wrapLobby shared canEdit model lobby returnButton
             ]
@@ -502,12 +494,13 @@ startGameSegment wrap wrapLobby shared canEdit model lobby returnButton =
             (startErrors |> Maybe.justIf canEdit |> Maybe.withDefault [])
         , Html.div [ HtmlA.class "button-spread" ]
             [ returnButton
-            , Button.view
-                Button.Raised
-                Button.Padded
-                (Strings.StartGame |> Lang.string shared)
-                (Icon.start |> Icon.view |> Just)
-                (StartGame |> wrap |> Maybe.justIf (List.isEmpty startErrors && canEdit))
+            , Html.button
+                [ HtmlA.type_ "button"
+                , HtmlA.class "start-game-button"
+                , HtmlA.disabled (not (List.isEmpty startErrors && canEdit))
+                , StartGame |> wrap |> HtmlE.onClick
+                ]
+                [ Icon.start |> Icon.view, Html.span [] [ Strings.StartGame |> Lang.html shared ] ]
             ]
         ]
 
@@ -727,11 +720,25 @@ tabs =
     [ Decks, Rules, Stages, Privacy, Presets ]
 
 
-tab : Shared -> Tab -> Tabs.TabModel msg
-tab shared target =
-    { label = target |> tabName |> Lang.string shared
-    , icon = Nothing
-    }
+viewTab : (Msg -> msg) -> Shared -> Tab -> Tab -> Html msg
+viewTab wrap shared selected target =
+    let
+        isSelected =
+            target == selected
+    in
+    Html.button
+        [ HtmlA.type_ "button"
+        , HtmlA.classList [ ( "selected", isSelected ) ]
+        , HtmlA.attribute "aria-pressed"
+            (if isSelected then
+                "true"
+
+             else
+                "false"
+            )
+        , ChangeTab (Just target) |> wrap |> HtmlE.onClick
+        ]
+        [ target |> tabName |> Lang.html shared ]
 
 
 tabName : Tab -> MdString

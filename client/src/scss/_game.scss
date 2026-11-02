@@ -268,3 +268,258 @@ ol.card-set {
     }
   }
 }
+
+// Plays falling in behind the call are noise on a small screen and fight the dark design; the TV shows who played.
+.background-plays {
+  display: none;
+}
+
+// The round, who reads aloud, and your points, above the call.
+#top-content .top-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  height: auto;
+  margin: 0;
+  padding: 0.5rem 1.25rem;
+  background: colors.$background;
+  border-bottom: 1px solid colors.$line;
+
+  #minor-actions {
+    margin: 0;
+    justify-self: start;
+  }
+
+  .game-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .game-status-round {
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
+  .game-status-reader {
+    font-size: 0.8125rem;
+    color: colors.$text-muted;
+  }
+
+  .game-status-score {
+    justify-self: end;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.75rem;
+    background: colors.$surface;
+    font-family: fonts.$display;
+    font-size: 1.25rem;
+    color: colors.$secondary;
+
+    span {
+      font-family: fonts.$general;
+      font-weight: 600;
+      font-size: 0.8125rem;
+      color: colors.$text-muted;
+    }
+  }
+}
+
+// The action the game is waiting on: a big labelled button.
+#game .main-action {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 999;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  height: 3.5rem;
+  padding: 0 1.75rem;
+
+  border: 0;
+  border-radius: 1rem;
+  background: colors.$primary;
+  color: colors.$on-primary;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.5);
+  font-family: fonts.$display;
+  font-size: 1.25rem;
+  cursor: pointer;
+
+  transition:
+    opacity 15ms linear 30ms,
+    transform 0.27s cubic-bezier(0, 0, 0.2, 1);
+
+  &:hover {
+    background: colors.$primary-light;
+  }
+
+  &:focus-visible {
+    outline: 3px solid colors.$text;
+    outline-offset: 3px;
+  }
+
+  &.exited {
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+// Phones: everything full width, the hand as a compact grid, the action as a bar along the bottom.
+@media (max-width: 36rem) {
+  #game {
+    padding-bottom: 6rem;
+
+    .main-action {
+      left: 1.25rem;
+      right: 1.25rem;
+      bottom: 1.4rem;
+    }
+
+    .round {
+      padding: 1rem 1.25rem 0.6rem;
+
+      > .game-card {
+        width: 100%;
+        margin: 0;
+
+        // Size the card to its text; the back stays out of the flow.
+        .aspect {
+          height: auto;
+          padding-top: 0;
+
+          .side.front {
+            position: relative;
+            min-height: 7.5rem;
+          }
+        }
+
+        .side {
+          padding: 1.1rem 1.25rem;
+          border-radius: 1.1rem;
+        }
+
+        .content {
+          font-size: 1.375rem;
+          line-height: 1.25;
+        }
+      }
+    }
+
+    // Plays being revealed, judged or voted on: one full-width row each.
+    ul.cards:not(.hand) {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 0.625rem;
+      margin: 0;
+      padding: 0 1.25rem;
+
+      > li {
+        min-width: 0;
+      }
+
+      .with-byline {
+        margin: 0;
+        align-items: stretch;
+      }
+
+      ol.card-set {
+        margin: 0;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        gap: 0.25rem;
+
+        li,
+        li:last-child {
+          height: auto;
+        }
+      }
+
+      .game-card {
+        width: auto;
+        margin: 0;
+
+        .aspect {
+          height: auto;
+          padding-top: 0;
+
+          .side.front {
+            position: relative;
+            min-height: 4rem;
+          }
+        }
+
+        .side {
+          padding: 0.875rem 1rem;
+          border-radius: 0.875rem;
+          box-shadow: none;
+        }
+
+        .card-info {
+          display: none;
+        }
+
+        .content {
+          font-size: 1.125rem;
+          line-height: 1.2;
+        }
+      }
+
+      ol.card-set.picked .side {
+        box-shadow: 0 0 0 0.25rem colors.$primary;
+      }
+    }
+
+    ul.hand {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.625rem;
+      margin: 0;
+      padding: 0 1.25rem;
+
+      > * {
+        min-width: 0;
+        width: auto;
+        margin: 0;
+      }
+
+      .game-card {
+        width: auto;
+        margin: 0;
+
+        .aspect {
+          height: 7.5rem;
+          padding-top: 0;
+        }
+
+        .side {
+          padding: 0.875rem;
+          border-radius: 0.875rem;
+          box-shadow: none;
+        }
+
+        .card-info {
+          display: none;
+        }
+
+        .content {
+          font-size: 1rem;
+          line-height: 1.2;
+        }
+      }
+
+      .game-card.picked .side {
+        box-shadow: 0 0 0 0.25rem colors.$primary;
+      }
+    }
+  }
+}
