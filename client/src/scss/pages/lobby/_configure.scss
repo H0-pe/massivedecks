@@ -155,10 +155,11 @@
   }
 }
 
-#add-deck .multipart .primary {
-  flex-grow: 1;
-  flex-shrink: 1;
-  width: 1em;
+// The source and deck pickers share the row with the add button. The class sits on the inner select, so size the
+// field around it.
+#add-deck .multipart > .ui-field {
+  flex: 1 1 1em;
+  min-width: 0;
 }
 
 .house-rules {
