@@ -156,6 +156,38 @@ const style = `
   outline: none;
 }
 
+/* The page's scrollbar styles (_ui.scss) don't reach into the shadow root. */
+.list::-webkit-scrollbar {
+  width: 0.75rem;
+}
+
+.list::-webkit-scrollbar-track {
+  background: transparent;
+  margin-block: 0.5rem;
+}
+
+.list::-webkit-scrollbar-thumb {
+  border: 0.25rem solid transparent;
+  border-radius: 1rem;
+  background: rgb(from var(--md-text) r g b / 0.22) padding-box;
+  min-height: 2.5rem;
+}
+
+.list::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(from var(--md-text) r g b / 0.4);
+}
+
+.list::-webkit-scrollbar-thumb:active {
+  background-color: var(--md-primary);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .list {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(from var(--md-text) r g b / 0.22) transparent;
+  }
+}
+
 .option {
   display: flex;
   align-items: center;

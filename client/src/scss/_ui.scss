@@ -109,6 +109,45 @@ $field-height: 3.25rem;
   --md-text-muted: #{colors.$text-muted};
   --md-text-faint: #{colors.$text-faint};
   --md-primary: #{colors.$primary};
+  color-scheme: dark;
+}
+
+// Scrollbars: a thin rounded thumb on a clear track that lights up pink while dragged. Chromium and Safari draw the
+// ::-webkit-scrollbar rules (Chromium ignores them once scrollbar-color is set, so that is only for Firefox).
+::-webkit-scrollbar {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  margin-block: 0.5rem;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 0.25rem solid transparent;
+  border-radius: 1rem;
+  background: rgba(colors.$text, 0.22) padding-box;
+  min-height: 2.5rem;
+
+  &:hover {
+    background-color: rgba(colors.$text, 0.4);
+  }
+
+  &:active {
+    background-color: colors.$primary;
+  }
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(colors.$text, 0.22) transparent;
+  }
 }
 
 md-select {
