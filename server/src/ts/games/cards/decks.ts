@@ -5,15 +5,51 @@ import { OutOfCardsError } from "../../errors/game-state-error.js";
 import * as Util from "../../util.js";
 import * as Card from "./card.js";
 
-const union = <T>(sets: Iterable<Set<T>>): Set<T> => {
-  const result = new Set<T>();
+/**
+ * Combine the cards of several decks, leaving out repeats: packs often share cards (e.g. a "main deck" and the
+ * versions it collects, or the same deck from two sources), and the same card twice in one game isn't fun. Cards
+ * count as the same when their text matches, ignoring case and punctuation. Blank custom cards are all kept.
+ */
+const combine = <C extends Card.Card>(
+  sets: Iterable<Set<C>>,
+  text: (card: C) => string,
+): Set<C> => {
+  const seen = new Set<string>();
+  const result = new Set<C>();
   for (const set of sets) {
-    for (const element of set) {
-      result.add(element);
+    for (const card of set) {
+      if (Card.isCustom(card)) {
+        result.add(card);
+        continue;
+      }
+      const key = normalise(text(card));
+      if (!seen.has(key)) {
+        seen.add(key);
+        result.add(card);
+      }
     }
   }
   return result;
 };
+
+const normalise = (text: string): string =>
+  text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}_]+/gu, " ")
+    .trim();
+
+const callText = (call: Card.Call): string =>
+  call.parts
+    .map((line) =>
+      line
+        .map((part) =>
+          typeof part === "string" ? part : Card.isSlot(part) ? "_" : part.text,
+        )
+        .join(""),
+    )
+    .join(" ");
+
+const responseText = (response: Card.Response): string => response.text;
 
 /**
  * A deck of cards.
@@ -89,7 +125,7 @@ export abstract class Deck<C extends Card.BaseCard> {
  */
 export class Calls extends Deck<Card.Call> {
   public static fromTemplates(template: Iterable<Template<Card.Call>>): Calls {
-    const deck = new Calls([], union(template));
+    const deck = new Calls([], combine(template, callText));
     deck.reshuffle();
     return deck;
   }
@@ -116,7 +152,7 @@ export class Responses extends Deck<Card.Response> {
   public static fromTemplates(
     template: Iterable<Template<Card.Response>>,
   ): Responses {
-    const deck = new Responses([], union(template));
+    const deck = new Responses([], combine(template, responseText));
     deck.reshuffle();
     return deck;
   }

@@ -34,6 +34,7 @@ import MassiveDecks.Util.Maybe as Maybe
 import MassiveDecks.Util.NeList exposing (NeList(..))
 import MassiveDecks.Util.Result as Result
 import Ui.Button as Button
+import Ui.TextField as TextField
 import Ui.IconButton as IconButton
 import Paper.Tooltip as Tooltip
 import Svg.Attributes as SvgA
@@ -43,6 +44,7 @@ init : Shared -> Model
 init shared =
     { toAdd = manyDecksEmpty shared
     , browser = Nothing
+    , listQuery = ""
     }
 
 
@@ -144,6 +146,9 @@ update shared existing msg model =
         SetBrowserQuery query ->
             ( { model | browser = model.browser |> Maybe.map (\b -> { b | query = query }) }, shared, Cmd.none )
 
+        SetListQuery query ->
+            ( { model | listQuery = query }, shared, Cmd.none )
+
         SetBrowserFilter filter ->
             ( { model | browser = model.browser |> Maybe.map (\b -> { b | filter = filter }) }, shared, Cmd.none )
 
@@ -180,7 +185,43 @@ view wrap shared model remote canEdit =
                 ]
 
             else
-                remote |> List.indexedMap (viewDeck wrap shared canEdit)
+                let
+                    query =
+                        model.listQuery |> String.trim |> String.toLower
+
+                    deckName deck =
+                        deck.result
+                            |> Result.toMaybe
+                            |> Maybe.andThen identity
+                            |> Maybe.map (.details >> .name)
+                            |> Maybe.withDefault (deck.source |> Source.Ex |> Source.defaultDetails shared |> .name)
+
+                    matching =
+                        remote
+                            |> List.indexedMap Tuple.pair
+                            |> List.filter (\( _, d ) -> query == "" || String.contains query (String.toLower (deckName d)))
+                in
+                if List.isEmpty matching then
+                    [ Html.tr [ HtmlA.class "empty-info" ]
+                        [ Html.td [ HtmlA.colspan 3 ] [ Strings.NoMatchingDecks |> Lang.html shared ] ]
+                    ]
+
+                else
+                    -- Keep each deck's position in the game's list: removing goes by index.
+                    matching |> List.map (\( i, d ) -> viewDeck wrap shared canEdit i d)
+
+        -- With many decks the list gets its own scroll area and a search field, so the page doesn't explode.
+        listSearch =
+            if List.length remote > 5 then
+                TextField.viewWithAttrs
+                    (Strings.SearchDecks |> Lang.string shared)
+                    TextField.Search
+                    model.listQuery
+                    (SetListQuery >> wrap |> Just)
+                    []
+
+            else
+                Html.nothing
 
         editor =
             if canEdit then
@@ -206,8 +247,12 @@ view wrap shared model remote canEdit =
                     Html.nothing
     in
     Html.div [ HtmlA.id "decks-tab", HtmlA.class "compressed-terms" ]
-        [ Html.h3 [] [ Strings.ConfigureDecks |> Lang.html shared ]
-        , Html.table []
+        [ Html.div [ HtmlA.class "deck-list-header" ]
+            [ Html.h3 [] [ Strings.ConfigureDecks |> Lang.html shared ]
+            , Html.span [ HtmlA.class "deck-list-count" ] [ Strings.DeckCount { count = List.length remote } |> Lang.html shared ]
+            ]
+        , listSearch
+        , Html.div [ HtmlA.class "deck-list" ] [ Html.table []
             [ Html.colgroup []
                 [ Html.col [ HtmlA.class "deck-name" ] []
                 , Html.col [ HtmlA.class "count" ] []
@@ -222,6 +267,7 @@ view wrap shared model remote canEdit =
                 ]
             , Html.tbody [] tableContent
             ]
+          ]
         , editor
         , browser
         ]

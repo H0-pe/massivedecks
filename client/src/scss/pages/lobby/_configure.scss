@@ -605,3 +605,40 @@
     flex: 1;
   }
 }
+
+// The game's deck list: a header with the count, a search field once there are more than a few, and its own scroll
+// area so adding many decks doesn't push everything else off the page.
+#decks-tab .deck-list-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+
+  .deck-list-count {
+    font-size: 0.875rem;
+    color: colors.$text-muted;
+  }
+}
+
+#decks-tab > .ui-field {
+  margin: 0.25rem 0 0.5rem;
+}
+
+#decks-tab .deck-list {
+  max-height: min(24rem, 55vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin-bottom: 1rem;
+  border-radius: 0.75rem;
+
+  table {
+    margin-bottom: 0;
+  }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: colors.$surface;
+  }
+}

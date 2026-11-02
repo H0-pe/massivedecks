@@ -61,6 +61,7 @@ errorToDeckOrError { source, reason } =
 type alias Model =
     { toAdd : Source.External
     , browser : Maybe Browser
+    , listQuery : String
     }
 
 
@@ -99,4 +100,5 @@ type Msg
     | CloseBrowser
     | SetBrowserQuery String
     | SetBrowserFilter BrowserFilter
+    | SetListQuery String
     | NoOp
