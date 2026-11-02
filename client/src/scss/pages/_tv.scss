@@ -1,0 +1,194 @@
+@use "../_colors";
+
+// TV mode: a shared big screen, read from across the room. Sizes scale with the screen (vmin), so the same layout
+// works on a 1080p or 4K TV and on a laptop.
+
+#tv {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  display: flex;
+  background: colors.$background;
+  font-size: 2.2vmin;
+
+  .tv-loading {
+    margin: auto;
+    font-size: 5em;
+  }
+
+  .tv-code {
+    font-family: monospace;
+    font-weight: bold;
+    letter-spacing: 0.15em;
+    background: colors.$on-primary;
+    color: colors.$on-primary-dark;
+    padding: 0.1em 0.4em;
+    border-radius: 0.2em;
+  }
+}
+
+// Before the game: big join instructions and who is in the room.
+#tv .tv-waiting-room {
+  margin: auto;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  h1 {
+    font-size: 3em;
+    margin: 0 0 0.5em;
+  }
+
+  .tv-join {
+    display: flex;
+    align-items: center;
+    gap: 2em;
+  }
+
+  .tv-join-text p {
+    font-size: 1.6em;
+    margin: 0.3em 0;
+  }
+
+  .tv-join-text .tv-code {
+    display: inline-block;
+    font-size: 3em;
+    margin-top: 0.2em;
+  }
+
+  .tv-qr svg {
+    width: 14em;
+    height: 14em;
+    background: white;
+    padding: 0.5em;
+    border-radius: 0.5em;
+  }
+
+  .tv-players {
+    list-style: none;
+    padding: 0;
+    margin: 1.5em 0 0.5em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6em;
+
+    li {
+      font-size: 1.6em;
+      padding: 0.3em 0.8em;
+      border-radius: 1em;
+      background: colors.$primary-light;
+      color: colors.$on-primary-light;
+    }
+
+    li.host {
+      background: colors.$secondary-light;
+      color: colors.$on-secondary-light;
+    }
+  }
+
+  .tv-waiting,
+  .tv-hint {
+    font-size: 1.4em;
+    opacity: 0.8;
+  }
+}
+
+// During the game: the spectate table on the left, scores on the right.
+#tv #spectate.tv-stage {
+  position: relative;
+  flex: 1 1 auto;
+  // Plays sit on a circle (35em radius) around the call. Size it so the circle fits the stage (the viewport minus the
+  // sidebar) in both directions, including a stack of three cards (Packing Heat, haiku) straight above or below the
+  // call: 35em + half a 3-card stack (~17em) + byline (~2em) must fit in 50vh.
+  font-size: min(0.8vw, 0.85vh);
+}
+
+#tv .tv-sidebar {
+  flex: 0 0 22vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  padding: 1.5em 1em;
+  box-sizing: border-box;
+  background: rgba(colors.$on-primary, 0.06);
+
+  .tv-timer {
+    align-self: center;
+    font-size: 3.5em;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tv-timer.urgent {
+    color: colors.$error;
+  }
+
+  .tv-scores {
+    flex: 1 1 auto;
+    overflow: hidden;
+
+    h2 {
+      margin: 0 0 0.5em;
+      font-size: 1.5em;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      font-size: 1.4em;
+      padding: 0.3em 0;
+      border-bottom: 1px solid colors.$secondary-background;
+    }
+
+    li.waiting {
+      opacity: 0.55;
+    }
+
+    li.away {
+      opacity: 0.35;
+    }
+
+    li.czar .tv-name {
+      font-weight: bold;
+    }
+
+    .tv-status {
+      width: 1.2em;
+      text-align: center;
+    }
+
+    .tv-name {
+      flex: 1 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tv-score {
+      font-weight: bold;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .tv-corner-join {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3em;
+    font-size: 1.1em;
+
+    .tv-code {
+      font-size: 1.6em;
+    }
+  }
+}

@@ -876,6 +876,36 @@ translate _ mdString =
                 Text " decks"
             ]
 
+        StartTvGame ->
+            [ Text "Start on TV" ]
+
+        StartTvGameDescription ->
+            [ Text "Turn this device into the shared screen: it shows the game code, the cards and the scores, while everyone plays on their phone." ]
+
+        TvGameName ->
+            [ Text "TV game" ]
+
+        TvMode ->
+            [ Text "TV mode" ]
+
+        TvModeDescription ->
+            [ Text "Use this screen as the shared TV screen for everyone." ]
+
+        TvWaitingForPlayers ->
+            [ Text "Waiting for players…" ]
+
+        TvFirstPlayerHostHint ->
+            [ Text "The first player to join leads the game and starts it from their phone." ]
+
+        TvScores ->
+            [ Text "Scores" ]
+
+        TvJoinInstruction { url } ->
+            [ Text "Go to ", Text url, Text " and enter this code:" ]
+
+        TvHostHint { name } ->
+            [ Text name, Text " leads the game and starts it from their phone." ]
+
         HandSize ->
             [ Text "패 카드 수" ]
 

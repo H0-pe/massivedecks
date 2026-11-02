@@ -910,6 +910,36 @@ translate _ mdString =
                 Text " Decks"
             ]
 
+        StartTvGame ->
+            [ Text "Am TV starten" ]
+
+        StartTvGameDescription ->
+            [ Text "Dieses Gerät wird zum gemeinsamen Bildschirm: Es zeigt Spielcode, Karten und Punktestand, alle anderen spielen am Handy." ]
+
+        TvGameName ->
+            [ Text "Fernsehrunde" ]
+
+        TvMode ->
+            [ Text "TV-Modus" ]
+
+        TvModeDescription ->
+            [ Text "Diesen Bildschirm als gemeinsamen TV-Bildschirm für alle verwenden." ]
+
+        TvWaitingForPlayers ->
+            [ Text "Warte auf Spieler…" ]
+
+        TvFirstPlayerHostHint ->
+            [ Text "Wer zuerst beitritt, leitet das Spiel und startet es am Handy." ]
+
+        TvScores ->
+            [ Text "Punkte" ]
+
+        TvJoinInstruction { url } ->
+            [ Text "Geht auf ", Text url, Text " und gebt diesen Code ein:" ]
+
+        TvHostHint { name } ->
+            [ Text name, Text " leitet das Spiel und startet es am Handy." ]
+
         HandSize ->
             [ Text "Größe der Hand" ]
 

@@ -191,8 +191,11 @@ ol.card-set {
     height: size.$card-overlap;
     overflow: visible;
 
-    &:hover {
+    &:hover,
+    &:focus,
+    &:focus-within {
       z-index: 1;
+      outline: none;
     }
 
     &:last-child {

@@ -3,6 +3,7 @@ module MassiveDecks.Game exposing
     , applyGameStarted
     , hotJoinPlayer
     , init
+    , secondsLeft
     , subscriptions
     , update
     , view
@@ -1323,6 +1324,22 @@ timer timeAnchor model =
                 Maybe.map2 (timeLeft timeAnchor startedAt) model.time limit
     in
     left |> Maybe.andThen timerInternal |> Maybe.withDefault (Html.div [ HtmlA.id "timer" ] [])
+
+
+{-| The whole seconds left in the current stage, if it has a time limit.
+-}
+secondsLeft : Time.Anchor -> Model -> Maybe Int
+secondsLeft timeAnchor model =
+    let
+        ( startedAt, limit, timedOut ) =
+            roundTimeDetails model.game
+    in
+    if timedOut then
+        Just 0
+
+    else
+        Maybe.map2 (timeLeft timeAnchor startedAt) model.time limit
+            |> Maybe.map (\millis -> max 0 (ceiling (toFloat millis / 1000)))
 
 
 timerInternal : Int -> Maybe (Html msg)

@@ -33,6 +33,7 @@ import MassiveDecks.Pages.Lobby.Configure.Model as Configure
 import MassiveDecks.Pages.Lobby.GameCode as GameCode exposing (GameCode)
 import MassiveDecks.Pages.Lobby.Model as Lobby
 import MassiveDecks.Pages.Lobby.Token as Token
+import MassiveDecks.Pages.Lobby.Tv as Tv
 import MassiveDecks.Pages.Route as Route
 import MassiveDecks.Pages.Start.LobbyBrowser as LobbyBrowser
 import MassiveDecks.Pages.Start.Messages exposing (..)
@@ -133,6 +134,16 @@ update shared msg model =
                 ( nlr, cmd ) =
                     HttpData.update
                         (startGameRequest (Strings.DefaultLobbyName { owner = model.name } |> Lang.string shared) model.name)
+                        httpDataMsg
+                        model.newLobbyRequest
+            in
+            ( { model | newLobbyRequest = nlr }, cmd )
+
+        StartTvGame httpDataMsg ->
+            let
+                ( nlr, cmd ) =
+                    HttpData.update
+                        (startTvGameRequest (Strings.TvGameName |> Lang.string shared))
                         httpDataMsg
                         model.newLobbyRequest
             in
@@ -329,6 +340,19 @@ startGameRequest gameName userName =
         |> Http.request
 
 
+{-| Start a game with this device as the shared TV screen: it joins under a fixed name and becomes a spectator once
+the lobby has loaded (see `MassiveDecks.Pages.Lobby.Tv`).
+-}
+startTvGameRequest : String -> HttpData.Pull Global.Msg
+startTvGameRequest gameName =
+    Api.newLobby
+        ((HttpData.Response >> StartTvGame >> Global.StartMsg)
+            |> Request.intercept Request.passthrough Request.passthrough (Request.replace (Global.JoinLobbyAsTv Tv.userName))
+        )
+        { name = gameName, owner = { name = Tv.userName, password = Nothing } }
+        |> Http.request
+
+
 joinGameRequest : GameCode -> String -> Maybe String -> HttpData.Pull Global.Msg
 joinGameRequest gameCode name password =
     Api.joinLobby
@@ -429,6 +453,15 @@ newContent shared model =
                 (Strings.PlayGame |> Lang.string shared)
                 (buttonIcon |> Icon.view |> Just)
                 (StartGame HttpData.Pull |> Global.StartMsg |> Maybe.justIf canStart)
+            , Html.div [ HtmlA.class "start-tv" ]
+                [ Html.p [] [ Strings.StartTvGameDescription |> Lang.html shared ]
+                , Button.view
+                    Button.Outlined
+                    Button.Padded
+                    (Strings.StartTvGame |> Lang.string shared)
+                    (Icon.spectator |> Icon.view |> Just)
+                    (StartTvGame HttpData.Pull |> Global.StartMsg |> Maybe.justIf (not loading))
+                ]
             ]
         ]
 

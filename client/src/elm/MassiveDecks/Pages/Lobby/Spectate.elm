@@ -1,5 +1,6 @@
 module MassiveDecks.Pages.Lobby.Spectate exposing
     ( init
+    , stripProtocol
     , update
     , view
     )

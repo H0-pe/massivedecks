@@ -19,6 +19,7 @@ type Msg
     = ChangePage Route
     | PageChanged Url
     | JoinLobby String Lobby.Auth
+    | JoinLobbyAsTv String Lobby.Auth
     | StartMsg Start.Msg
     | LobbyMsg Lobby.Msg
     | SettingsMsg Settings.Msg

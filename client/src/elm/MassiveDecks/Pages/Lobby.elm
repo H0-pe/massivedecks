@@ -47,6 +47,7 @@ import MassiveDecks.Pages.Lobby.Messages exposing (..)
 import MassiveDecks.Pages.Lobby.Model exposing (..)
 import MassiveDecks.Pages.Lobby.Route exposing (..)
 import MassiveDecks.Pages.Lobby.Spectate as Spectate
+import MassiveDecks.Pages.Lobby.Tv as Tv
 import MassiveDecks.Pages.Route as Route
 import MassiveDecks.Pages.Start.Route as Start
 import MassiveDecks.Ports as Ports
@@ -129,6 +130,21 @@ subscriptions wrap handleError model =
 
 update : (Msg -> msg) -> Shared -> Msg -> Model -> ( Change, Shared, Cmd msg )
 update wrap shared msg model =
+    let
+        ( change, newShared, cmd ) =
+            updateInternal wrap shared msg model
+    in
+    -- In TV mode the TV reacts to the lobby state (joins, role changes) to keep the room working.
+    case ( msg, change ) of
+        ( EventReceived _, Stay newModel ) ->
+            ( change, newShared, Cmd.batch [ cmd, Tv.housekeeping newModel ] )
+
+        _ ->
+            ( change, newShared, cmd )
+
+
+updateInternal : (Msg -> msg) -> Shared -> Msg -> Model -> ( Change, Shared, Cmd msg )
+updateInternal wrap shared msg model =
     case msg of
         GameMsg gameMsg ->
             case model.lobbyAndConfigure of
@@ -490,6 +506,9 @@ view wrap wrapSettings changePage shared model =
         Spectate ->
             Spectate.view (SpectateMsg >> wrap) (GameMsg >> wrap) changePage shared model
 
+        Tv ->
+            Tv.view (GameMsg >> wrap) shared model
+
 
 
 {- Private -}
@@ -684,6 +703,7 @@ lobbyMenu wrap shared menuState r s audienceMode user player game =
 
         viewMenuItems =
             [ ContextMenu.link Icon.spectator Strings.Spectate Strings.SpectateDescription ({ r | section = Just Spectate } |> Route.Lobby |> Route.url |> Just)
+            , ContextMenu.link Icon.spectator Strings.TvMode Strings.TvModeDescription ({ r | section = Just Tv } |> Route.Lobby |> Route.url |> Just)
             , case s of
                 Configure ->
                     ContextMenu.button Icon.start Strings.ReturnViewToGame Strings.ReturnViewToGameDescription (Nothing |> ChangeSection |> wrap |> Maybe.justIf (game /= Nothing))

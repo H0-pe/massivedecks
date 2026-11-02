@@ -21,6 +21,7 @@ type Section
     = Configure
     | Play
     | Spectate
+    | Tv
 
 
 route : List String -> Maybe String -> Maybe Route
@@ -37,6 +38,9 @@ route parts _ =
 
                     else if sectionName == [ spectateName ] then
                         Just Spectate
+
+                    else if sectionName == [ tvName ] then
+                        Just Tv
 
                     else
                         Nothing
@@ -87,6 +91,11 @@ spectateName =
     "spectate"
 
 
+tvName : String
+tvName =
+    "tv"
+
+
 sectionToString : Section -> String
 sectionToString section =
     case section of
@@ -98,3 +107,6 @@ sectionToString section =
 
         Spectate ->
             spectateName
+
+        Tv ->
+            tvName

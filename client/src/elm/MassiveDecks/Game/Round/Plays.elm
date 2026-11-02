@@ -106,6 +106,7 @@ viewPlay shared users liked picked { id, responses, action, byLine } =
                 ]
             , action |> Maybe.map HtmlE.onClick |> Maybe.withDefault HtmlA.nothing
             ]
-            (responses |> List.map (\card -> Html.li [] [ card ]))
+            -- Focusable so a tap brings an overlapped card to the front on touch screens (there is no hover).
+            (responses |> List.map (\card -> Html.li [ HtmlA.tabindex 0 ] [ card ]))
         ]
     )

@@ -10,6 +10,7 @@ type Msg
     = GameCodeChanged String
     | NameChanged String
     | StartGame (HttpData.Msg Never Lobby.Auth)
+    | StartTvGame (HttpData.Msg Never Lobby.Auth)
     | JoinGame (HttpData.Msg MdError Lobby.Auth)
     | LobbyBrowserMsg LobbyBrowser.Msg
     | PasswordChanged String

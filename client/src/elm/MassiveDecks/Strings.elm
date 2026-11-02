@@ -281,6 +281,16 @@ type MdString
     | NoPresets -- A message shown when no presets have been saved yet.
     | PresetNeedsSavedChanges -- A message explaining unsaved changes must be saved or reverted before applying a preset.
     | PresetDeckCount { decks : Int } -- A short description of how many decks a preset contains.
+    | StartTvGame -- The action of starting a new game with this device as the shared TV screen.
+    | StartTvGameDescription -- An explanation of what starting a game on a TV does.
+    | TvGameName -- The default name for a game started on a TV.
+    | TvMode -- The name of the TV mode (a shared big screen showing the game).
+    | TvModeDescription -- A description of the action of switching to the TV mode view.
+    | TvJoinInstruction { url : String } -- Tells players to go to the given URL and enter the code shown.
+    | TvWaitingForPlayers -- Shown on the TV while no players have joined yet.
+    | TvHostHint { name : String } -- Explains that the named player leads the game and starts it from their phone.
+    | TvFirstPlayerHostHint -- Explains that the first player to join will lead the game.
+    | TvScores -- A heading for the list of players and their scores on the TV.
     | HandSize -- The name of the rule defining how many cards a player can hold in their hand.
     | HandSizeDescription -- The description of the above rule.
     | ScoreLimit -- The name of the rule defining how many points a player has to accumulate to win the game.

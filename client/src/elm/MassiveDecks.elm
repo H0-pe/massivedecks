@@ -181,28 +181,10 @@ update msg model =
             ( { model | page = page }, Cmd.batch [ pageCmd, cutConnection ] )
 
         JoinLobby name auth ->
-            let
-                shared =
-                    model.shared
+            joinLobby Nothing name auth model
 
-                ( ( lobby, lobbyCmd ), ( settings, settingsCmd ) ) =
-                    case Lobby.init shared { gameCode = auth.claims.gc, section = Nothing } (Just auth) of
-                        Route.Continue ( continue, cmd ) ->
-                            ( changePage shared ( continue |> Pages.Lobby, cmd )
-                            , Settings.onJoinLobby auth name shared.settings
-                            )
-
-                        Route.Redirect redirect ->
-                            ( changePageFromRoute model.shared redirect model.page
-                            , ( shared.settings, Cmd.none )
-                            )
-            in
-            ( { model
-                | shared = { shared | settings = settings }
-                , page = lobby
-              }
-            , Cmd.batch [ lobbyCmd, settingsCmd ]
-            )
+        JoinLobbyAsTv name auth ->
+            joinLobby (Just Lobby.Tv) name auth model
 
         UpdateToken auth ->
             let
@@ -444,3 +426,29 @@ changePageFromRoute shared route oldPage =
 changePage : Shared -> ( Page, Cmd Msg ) -> ( Page, Cmd Msg )
 changePage shared ( page, cmd ) =
     ( page, Cmd.batch [ page |> Pages.toRoute |> Route.url |> Navigation.pushUrl shared.key, cmd ] )
+
+
+joinLobby : Maybe Lobby.Section -> String -> Lobby.Auth -> Model -> ( Model, Cmd Msg )
+joinLobby section name auth model =
+    let
+        shared =
+            model.shared
+
+        ( ( lobby, lobbyCmd ), ( settings, settingsCmd ) ) =
+            case Lobby.init shared { gameCode = auth.claims.gc, section = section } (Just auth) of
+                Route.Continue ( continue, cmd ) ->
+                    ( changePage shared ( continue |> Pages.Lobby, cmd )
+                    , Settings.onJoinLobby auth name shared.settings
+                    )
+
+                Route.Redirect redirect ->
+                    ( changePageFromRoute model.shared redirect model.page
+                    , ( shared.settings, Cmd.none )
+                    )
+    in
+    ( { model
+        | shared = { shared | settings = settings }
+        , page = lobby
+      }
+    , Cmd.batch [ lobbyCmd, settingsCmd ]
+    )
