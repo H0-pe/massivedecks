@@ -132,7 +132,13 @@ defaultLanguage =
 findBestMatch : List String -> Maybe Language
 findBestMatch codes =
     -- TODO: Standardising & Fuzzy matching like https://github.com/LuminosoInsight/langcodes
-    Maybe.first (codes |> List.map fromCode)
+    let
+        -- Browsers often only send a regional tag (e.g. "de-AT" on iPhones in Austria), so fall back to the primary
+        -- language ("de") when there is no exact match.
+        primaryLanguage tag =
+            tag |> String.split "-" |> List.head |> Maybe.andThen fromCode
+    in
+    Maybe.first ((codes |> List.map fromCode) ++ (codes |> List.map primaryLanguage))
 
 
 {-| Build an actual string from an `MdString` in the user's language.
