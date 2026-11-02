@@ -45,6 +45,7 @@ type alias Model =
     , passwordVisible : Bool
     , conflicts : List Id
     , presetName : String
+    , presetsUnavailable : Bool
     }
 
 

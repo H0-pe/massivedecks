@@ -2,12 +2,16 @@ module MassiveDecks.Requests.Api exposing
     ( checkAlive
     , joinLobby
     , lobbySummaries
+    , deletePreset
     , newLobby
+    , presets
+    , savePresets
     , serverConfig
     )
 
 import Http
 import Json.Decode as Json
+import Json.Encode
 import MassiveDecks.Card.Source.Model as Source
 import MassiveDecks.Error.Model as Error
 import MassiveDecks.Models.Decoders as Decoders
@@ -20,8 +24,10 @@ import MassiveDecks.Pages.Start.LobbyBrowser.Model as LobbyBrowser
 import MassiveDecks.Pages.Start.Model as Start
 import MassiveDecks.Requests.Request as Request exposing (Request)
 import MassiveDecks.ServerConfig exposing (ServerConfig)
+import MassiveDecks.Settings.Model exposing (Preset)
 import MassiveDecks.User as User
 import MassiveDecks.Util.Result as Result
+import Url
 import Url.Builder
 
 
@@ -81,6 +87,27 @@ checkAlive msg tokens =
     }
 
 
+{-| Get the presets saved on the server. Only someone in a lobby can.
+-}
+presets : (Request.Response Never (List Preset) -> msg) -> Lobby.Token -> Request msg
+presets msg token =
+    presetRequest msg token "GET" [] Http.emptyBody
+
+
+{-| Save presets on the server, replacing any with the same names. Responds with all presets.
+-}
+savePresets : (Request.Response Never (List Preset) -> msg) -> Lobby.Token -> List Preset -> Request msg
+savePresets msg token toSave =
+    presetRequest msg token "POST" [] (toSave |> Json.Encode.list Encoders.preset |> Http.jsonBody)
+
+
+{-| Delete a preset from the server. Responds with the remaining presets.
+-}
+deletePreset : (Request.Response Never (List Preset) -> msg) -> Lobby.Token -> String -> Request msg
+deletePreset msg token name =
+    presetRequest msg token "DELETE" [ Url.percentEncode name ] Http.emptyBody
+
+
 {-| Get configuration from the server.
 -}
 serverConfig : (Request.Response Never ServerConfig -> msg) -> Request msg
@@ -105,6 +132,18 @@ decodeToken =
         Request.GeneralError
         Request.SpecificError
         (Token.decode >> Result.unifiedMap (Error.Token >> Request.GeneralError) Request.Value)
+
+
+presetRequest : (Request.Response Never (List Preset) -> msg) -> Lobby.Token -> String -> List String -> Http.Body -> Request msg
+presetRequest msg token method path body =
+    { method = method
+    , headers = [ Http.header "Authorization" ("Bearer " ++ token) ]
+    , url = url ("presets" :: path)
+    , body = body
+    , expect = Request.expectResponse msg noError Decoders.presets
+    , timeout = Nothing
+    , tracker = Nothing
+    }
 
 
 url : List String -> String

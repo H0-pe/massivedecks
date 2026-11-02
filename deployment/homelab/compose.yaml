@@ -8,6 +8,9 @@ name: massivedecks
 networks:
   internal:
 
+volumes:
+  presets:
+
 # Docker keeps container logs forever by default.
 x-logging: &logging
   driver: json-file
@@ -29,6 +32,8 @@ services:
       - MD_SECRET=${MD_SECRET:?MD_SECRET must be set in .env}
     volumes:
       - ./config.json5:/md/config.json5:ro
+      # Vorlagen (Presets) für alle Spieler, überleben Neustarts.
+      - presets:/md/data
     networks:
       - internal
     restart: unless-stopped

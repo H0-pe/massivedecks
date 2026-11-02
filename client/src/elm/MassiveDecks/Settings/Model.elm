@@ -38,6 +38,7 @@ type alias Settings =
     , notifications : Notifications.Settings
     , autoAdvance : Maybe Bool
     , presets : List Preset
+    , presetsUploaded : Bool
     }
 
 

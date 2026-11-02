@@ -16,7 +16,10 @@ import * as CreateLobby from "./action/initial/create-lobby.js";
 import * as RegisterUser from "./action/initial/register-user.js";
 import * as ServerConfig from "./config.js";
 import { MassiveDecksError } from "./errors.js";
-import { InvalidLobbyPasswordError } from "./errors/authentication.js";
+import {
+  InvalidLobbyPasswordError,
+  NotAuthenticatedError,
+} from "./errors/authentication.js";
 import { UsernameAlreadyInUseError } from "./errors/registration.js";
 import * as Event from "./event.js";
 import * as PresenceChanged from "./events/lobby-event/presence-changed.js";
@@ -24,6 +27,7 @@ import * as Player from "./games/player.js";
 import * as Change from "./lobby/change.js";
 import type { GameCode } from "./lobby/game-code.js";
 import * as Logging from "./logging.js";
+import * as Presets from "./presets.js";
 import * as ServerState from "./server-state.js";
 import * as Timeout from "./timeout.js";
 import * as UserDisconnect from "./timeout/user-disconnect.js";
@@ -78,6 +82,10 @@ async function main(): Promise<void> {
   }
 
   const state = await ServerState.create(config);
+
+  const presets = await Presets.Store.load(
+    process.env["MD_PRESETS_PATH"] ?? "presets.json",
+  );
 
   app.use(bodyParser.json());
 
@@ -203,6 +211,60 @@ async function main(): Promise<void> {
   app.ws("/api/games/:gameCode", async (socket, req) => {
     const gameCode = req.params["gameCode"] as string;
     state.socketManager.add(state, gameCode, socket);
+  });
+
+  // Presets are shared by everyone on this server; only someone in a running lobby can see or change them.
+  const requireLobbyMember = async (req: Request): Promise<void> => {
+    const header = req.get("Authorization") ?? "";
+    const token = header.startsWith("Bearer ") ? header.slice(7) : "";
+    try {
+      const claims = Token.validate(
+        token,
+        await state.store.id(),
+        config.secret,
+      );
+      if (await state.store.exists(claims.gc)) {
+        return;
+      }
+    } catch (error) {
+      // Treated as not authenticated below.
+    }
+    throw new NotAuthenticatedError();
+  };
+
+  const presetResult = async (
+    res: Response,
+    change: () => Promise<Presets.Preset[]>,
+  ) => {
+    try {
+      res.json(await change());
+    } catch (error) {
+      if (error instanceof Presets.InvalidPresetError) {
+        res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+      } else {
+        throw error;
+      }
+    }
+  };
+
+  app.get("/api/presets", async (req, res) => {
+    await requireLobbyMember(req);
+    res.json(presets.all());
+  });
+
+  app.post("/api/presets", async (req, res) => {
+    await requireLobbyMember(req);
+    await presetResult(res, () => {
+      if (!Array.isArray(req.body)) {
+        throw new Presets.InvalidPresetError("Expected a list of presets.");
+      }
+      return presets.save(req.body.map(Presets.validate));
+    });
+  });
+
+  app.delete("/api/presets/:name", async (req, res) => {
+    await requireLobbyMember(req);
+    await presetResult(res, () => presets.delete(req.params.name));
   });
 
   app.get("/api/sources", async (req, res) => {

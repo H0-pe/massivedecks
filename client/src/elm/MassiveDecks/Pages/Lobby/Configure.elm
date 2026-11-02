@@ -10,6 +10,7 @@ import FontAwesome as Icon
 import Html exposing (Html)
 import Html.Attributes as HtmlA
 import Html.Events as HtmlE
+import Http
 import Json.Decode as Json
 import Json.Diff as Json
 import Json.Encode
@@ -46,6 +47,8 @@ import MassiveDecks.Pages.Lobby.GameCode as GameCode exposing (GameCode)
 import MassiveDecks.Pages.Lobby.Invite as Invite
 import MassiveDecks.Pages.Lobby.Messages as Lobby
 import MassiveDecks.Pages.Lobby.Model as Lobby exposing (Lobby)
+import MassiveDecks.Requests.Api as Api
+import MassiveDecks.Requests.Request as Request
 import MassiveDecks.Settings as Settings
 import MassiveDecks.Strings as Strings exposing (MdString)
 import MassiveDecks.Strings.Languages as Lang
@@ -67,12 +70,16 @@ init shared config =
     , passwordVisible = False
     , conflicts = []
     , presetName = ""
+    , presetsUnavailable = False
     }
 
 
-update : Shared -> Msg -> Model -> Config -> ( Model, Shared, Cmd msg )
-update shared msg model config =
+update : (Msg -> msg) -> Lobby.Token -> Shared -> Msg -> Model -> Config -> ( Model, Shared, Cmd msg )
+update wrap token shared msg model config =
     let
+        presetRequest request =
+            request (ReceivePresets >> wrap) token |> Http.request
+
         allComponent =
             all identity config
 
@@ -91,7 +98,19 @@ update shared msg model config =
             ( model, shared, Actions.startGame )
 
         ChangeTab t ->
-            ( { model | tab = t |> Maybe.withDefault model.tab }, shared, Cmd.none )
+            let
+                newTab =
+                    t |> Maybe.withDefault model.tab
+
+                -- Presets live on the server, so get the current ones whenever the tab is opened.
+                cmd =
+                    if newTab == Presets && model.tab /= Presets then
+                        presetRequest Api.presets
+
+                    else
+                        Cmd.none
+            in
+            ( { model | tab = newTab }, shared, cmd )
 
         ResolveConflict source id ->
             case getComponent id of
@@ -162,10 +181,16 @@ update shared msg model config =
 
             else
                 let
+                    preset =
+                        Presets.fromConfig presetName config
+
                     ( settings, cmd ) =
-                        Settings.savePreset (Presets.fromConfig presetName config) shared.settings
+                        Settings.savePreset preset shared.settings
                 in
-                ( { model | presetName = "" }, { shared | settings = settings }, cmd )
+                ( { model | presetName = "" }
+                , { shared | settings = settings }
+                , Cmd.batch [ cmd, presetRequest (\m t -> Api.savePresets m t [ preset ]) ]
+                )
 
         ApplyPreset scope preset ->
             -- Only with no unsaved local changes, so the server's update simply replaces the local config.
@@ -183,7 +208,40 @@ update shared msg model config =
                 ( settings, cmd ) =
                     Settings.deletePreset presetName shared.settings
             in
-            ( model, { shared | settings = settings }, cmd )
+            ( model
+            , { shared | settings = settings }
+            , Cmd.batch [ cmd, presetRequest (\m t -> Api.deletePreset m t presetName) ]
+            )
+
+        ReceivePresets response ->
+            case response of
+                Request.Value onServer ->
+                    let
+                        local =
+                            shared.settings.settings
+
+                        -- Presets saved in this browser before they were kept on the server are uploaded once.
+                        toUpload =
+                            if local.presetsUploaded then
+                                []
+
+                            else
+                                local.presets |> List.filter (\p -> onServer |> List.any (\s -> s.name == p.name) |> not)
+
+                        ( settings, cmd ) =
+                            Settings.setPresets (onServer ++ toUpload) shared.settings
+
+                        uploadCmd =
+                            if List.isEmpty toUpload then
+                                Cmd.none
+
+                            else
+                                presetRequest (\m t -> Api.savePresets m t toUpload)
+                    in
+                    ( { model | presetsUnavailable = False }, { shared | settings = settings }, Cmd.batch [ cmd, uploadCmd ] )
+
+                _ ->
+                    ( { model | presetsUnavailable = True }, shared, Cmd.none )
 
 
 view : (Msg -> msg) -> (Lobby.Msg -> msg) -> Shared -> Maybe msg -> Message msg -> GameCode -> Lobby.LobbyAndConfigure -> Html msg

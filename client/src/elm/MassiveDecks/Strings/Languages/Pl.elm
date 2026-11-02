@@ -1015,7 +1015,7 @@ translate maybeDeclCase mdString =
             [ Text "Presets" ]
 
         PresetsDescription ->
-            [ Text "Save this game's settings (rules, time limits, privacy and decks) as a preset to reuse them later. Presets are stored in this browser. Passwords are never saved." ]
+            [ Text "Save this game's settings (rules, time limits, privacy and decks) as a preset to reuse them later. Presets are saved on this server and shared by everyone who plays here. Passwords are never saved." ]
 
         PresetNameLabel ->
             [ Text "Preset name" ]
@@ -1034,6 +1034,9 @@ translate maybeDeclCase mdString =
 
         NoPresets ->
             [ Text "No presets saved yet." ]
+
+        PresetsUnavailable ->
+            [ Text "Couldn't reach the server's presets. Showing the ones last seen on this device." ]
 
         PresetNeedsSavedChanges ->
             [ Text "Save or revert your unsaved changes before applying a preset." ]

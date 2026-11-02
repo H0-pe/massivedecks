@@ -10,6 +10,7 @@ module MassiveDecks.Models.Decoders exposing
     , language
     , lobbyState
     , lobbySummary
+    , presets
     , lobbyToken
     , mdError
     , part
@@ -203,7 +204,16 @@ settings =
         |> Json.optional "speech" speech Speech.default
         |> Json.optional "notifications" notifications Notifications.default
         |> Json.optional "autoAdvance" (Json.bool |> Json.map Just) Nothing
-        |> Json.optional "presets" (Json.list preset) []
+        |> Json.optional "presets" presets []
+        |> Json.optional "presetsUploaded" Json.bool False
+
+
+{-| Presets that can't be read (e.g. saved by a different version) are skipped rather than failing the whole list.
+-}
+presets : Json.Decoder (List Settings.Preset)
+presets =
+    Json.list Json.value
+        |> Json.map (List.filterMap (Json.decodeValue preset >> Result.toMaybe))
 
 
 preset : Json.Decoder Settings.Preset

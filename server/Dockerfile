@@ -43,6 +43,11 @@ WORKDIR /md
 COPY ["./package.json", "./package-lock.json", "./"]
 RUN ["npm", "ci", "--only=production"]
 
+# Presets are kept here; mount a volume so they survive new containers.
+RUN ["mkdir", "-p", "/md/data"]
+RUN ["chown", "node:node", "/md/data"]
+ENV MD_PRESETS_PATH "/md/data/presets.json"
+
 COPY ["./config.json5", "./"]
 COPY ["./decks", "./decks"]
 COPY --from=build ["/md/dist", "./"]

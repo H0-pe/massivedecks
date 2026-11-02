@@ -2,6 +2,7 @@ module MassiveDecks.Pages.Lobby.Configure.Messages exposing (Msg(..), PresetScop
 
 import MassiveDecks.Pages.Lobby.Configure.Decks.Model as Decks
 import MassiveDecks.Pages.Lobby.Configure.Model exposing (..)
+import MassiveDecks.Requests.Request as Request
 import MassiveDecks.Settings.Model exposing (Preset)
 
 
@@ -11,6 +12,7 @@ type Msg
     | SavePreset
     | ApplyPreset PresetScope Preset
     | DeletePreset String
+    | ReceivePresets (Request.Response Never (List Preset))
     | DecksMsg Decks.Msg
     | ChangeTab (Maybe Tab)
     | StartGame

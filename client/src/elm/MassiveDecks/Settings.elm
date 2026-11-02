@@ -6,6 +6,7 @@ module MassiveDecks.Settings exposing
     , onAddDeck
     , onJoinLobby
     , savePreset
+    , setPresets
     , onTokenUpdate
     , removeToken
     , update
@@ -84,6 +85,7 @@ defaults =
     , notifications = Notifications.default
     , autoAdvance = Nothing
     , presets = []
+    , presetsUploaded = False
     }
 
 
@@ -222,6 +224,20 @@ savePreset preset model =
 
         updatedSettings =
             { settings | presets = others ++ [ preset ] }
+    in
+    ( { model | settings = updatedSettings }, LocalStorage.store updatedSettings )
+
+
+{-| Replace the presets with the ones from the server.
+-}
+setPresets : List Preset -> Model -> ( Model, Cmd msg )
+setPresets presets model =
+    let
+        settings =
+            model.settings
+
+        updatedSettings =
+            { settings | presets = presets, presetsUploaded = True }
     in
     ( { model | settings = updatedSettings }, LocalStorage.store updatedSettings )
 

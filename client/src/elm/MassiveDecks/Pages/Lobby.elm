@@ -393,7 +393,7 @@ updateInternal wrap shared msg model =
                 Just { lobby, configure } ->
                     let
                         ( c, s, cmd ) =
-                            Configure.update shared configureMsg configure lobby.config
+                            Configure.update (ConfigureMsg >> wrap) model.auth.token shared configureMsg configure lobby.config
                     in
                     ( Stay { model | lobbyAndConfigure = Just { lobby = lobby, configure = c } }, s, cmd )
 

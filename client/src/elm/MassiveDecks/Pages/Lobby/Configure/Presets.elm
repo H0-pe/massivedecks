@@ -5,7 +5,7 @@ module MassiveDecks.Pages.Lobby.Configure.Presets exposing
     )
 
 {-| Presets: saved lobby configurations (rules, time limits, privacy and decks) that can be applied to a game.
-They are stored in the user's local storage alongside the other settings.
+They are stored on the server and shared by everyone using it; the last ones seen are kept in local storage.
 -}
 
 import FontAwesome as Icon
@@ -128,6 +128,14 @@ view wrap shared model remote canEdit =
             else
                 Html.text ""
 
+        unavailableWarning =
+            if model.presetsUnavailable then
+                Html.p [ HtmlA.class "preset-warning" ]
+                    [ Icon.view Icon.warning, Html.text " ", Strings.PresetsUnavailable |> Lang.html shared ]
+
+            else
+                Html.text ""
+
         list =
             if List.isEmpty presets then
                 Html.p [ HtmlA.class "empty-info" ] [ Strings.NoPresets |> Lang.html shared ]
@@ -154,6 +162,7 @@ view wrap shared model remote canEdit =
                 save
             ]
         , unsavedWarning
+        , unavailableWarning
         , list
         ]
 

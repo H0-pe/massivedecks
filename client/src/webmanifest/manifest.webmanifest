@@ -4,8 +4,8 @@
   "lang": "en",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#cccccc",
-  "theme_color": "#42a5f5",
+  "background_color": "#0e0e10",
+  "theme_color": "#0e0e10",
   "orientation": "natural",
   "description": "A comedy party game.",
   "icons": [

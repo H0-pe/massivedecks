@@ -292,6 +292,7 @@ type MdString
     | ApplyPresetDecksOnly -- The action of adding only the decks from a preset to the game.
     | DeletePreset -- The action of deleting a preset.
     | NoPresets -- A message shown when no presets have been saved yet.
+    | PresetsUnavailable -- A message shown when the presets saved on the server couldn't be loaded or changed.
     | PresetNeedsSavedChanges -- A message explaining unsaved changes must be saved or reverted before applying a preset.
     | PresetDeckCount { decks : Int } -- A short description of how many decks a preset contains.
     | StartTvGame -- The action of starting a new game with this device as the shared TV screen.

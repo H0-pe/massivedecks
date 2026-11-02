@@ -943,7 +943,7 @@ translate _ mdString =
             [ Text "Vorlagen" ]
 
         PresetsDescription ->
-            [ Text "Speichere die Einstellungen dieses Spiels (Regeln, Zeitlimits, Datenschutz und Decks) als Vorlage, um sie später wiederzuverwenden. Vorlagen werden in diesem Browser gespeichert. Passwörter werden nie gespeichert." ]
+            [ Text "Speichere die Einstellungen dieses Spiels (Regeln, Zeitlimits, Datenschutz und Decks) als Vorlage, um sie später wiederzuverwenden. Vorlagen werden auf diesem Server gespeichert und sind für alle da, die hier spielen. Passwörter werden nie gespeichert." ]
 
         PresetNameLabel ->
             [ Text "Name der Vorlage" ]
@@ -962,6 +962,9 @@ translate _ mdString =
 
         NoPresets ->
             [ Text "Noch keine Vorlagen gespeichert." ]
+
+        PresetsUnavailable ->
+            [ Text "Die Vorlagen auf dem Server sind gerade nicht erreichbar. Angezeigt werden die zuletzt auf diesem Gerät gesehenen." ]
 
         PresetNeedsSavedChanges ->
             [ Text "Speichere oder verwirf zuerst deine ungespeicherten Änderungen, bevor du eine Vorlage anwendest." ]

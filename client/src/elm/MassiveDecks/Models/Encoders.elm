@@ -9,6 +9,7 @@ module MassiveDecks.Models.Encoders exposing
     , packingHeat
     , parts
     , playerPresence
+    , preset
     , privilege
     , rando
     , reboot
@@ -311,6 +312,7 @@ settings s =
                   , ( "speech", s.speech |> speech )
                   , ( "notifications", s.notifications |> notifications )
                   , ( "presets", Json.list preset s.presets )
+                  , ( "presetsUploaded", Json.bool s.presetsUploaded )
                   ]
                 , lun
                 , cl
