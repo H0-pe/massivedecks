@@ -823,6 +823,42 @@ translate _ mdString =
         ConfigurePrivacy ->
             [ Text "Privacy" ]
 
+        ConfigurePresets ->
+            [ Text "Presets" ]
+
+        PresetsDescription ->
+            [ Text "Save this game's settings (rules, time limits, privacy and decks) as a preset to reuse them later. Presets are stored in this browser. Passwords are never saved." ]
+
+        PresetNameLabel ->
+            [ Text "Preset name" ]
+
+        SavePreset ->
+            [ Text "Save as preset" ]
+
+        ApplyPresetWholeGame ->
+            [ Text "Apply everything" ]
+
+        ApplyPresetDecksOnly ->
+            [ Text "Add decks only" ]
+
+        DeletePreset ->
+            [ Text "Delete preset" ]
+
+        NoPresets ->
+            [ Text "No presets saved yet." ]
+
+        PresetNeedsSavedChanges ->
+            [ Text "Save or revert your unsaved changes before applying a preset." ]
+
+        PresetDeckCount { decks } ->
+            [ decks |> String.fromInt |> Text
+            , if decks == 1 then
+                Text " deck"
+
+              else
+                Text " decks"
+            ]
+
         HandSize ->
             [ Text "Hand Size" ]
 

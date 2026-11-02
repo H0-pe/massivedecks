@@ -254,7 +254,7 @@ view shared model =
                 [ Html.blankA
                     [ HtmlA.class "logo"
                     , Strings.MDProject |> Lang.title shared
-                    , HtmlA.href "https://github.com/Lattyware/massivedecks"
+                    , HtmlA.href "https://github.com/H0-pe/massivedecks"
                     ]
                     [ Icon.massiveDecks |> Icon.styled [ Strings.MDLogoDescription |> Lang.alt shared ] |> Icon.view ]
                 , Html.blankA

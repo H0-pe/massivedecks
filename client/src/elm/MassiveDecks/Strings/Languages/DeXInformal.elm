@@ -874,6 +874,42 @@ translate _ mdString =
         ConfigurePrivacy ->
             [ Text "Datenschutz" ]
 
+        ConfigurePresets ->
+            [ Text "Vorlagen" ]
+
+        PresetsDescription ->
+            [ Text "Speichere die Einstellungen dieses Spiels (Regeln, Zeitlimits, Datenschutz und Decks) als Vorlage, um sie später wiederzuverwenden. Vorlagen werden in diesem Browser gespeichert. Passwörter werden nie gespeichert." ]
+
+        PresetNameLabel ->
+            [ Text "Name der Vorlage" ]
+
+        SavePreset ->
+            [ Text "Als Vorlage speichern" ]
+
+        ApplyPresetWholeGame ->
+            [ Text "Alles übernehmen" ]
+
+        ApplyPresetDecksOnly ->
+            [ Text "Nur Decks hinzufügen" ]
+
+        DeletePreset ->
+            [ Text "Vorlage löschen" ]
+
+        NoPresets ->
+            [ Text "Noch keine Vorlagen gespeichert." ]
+
+        PresetNeedsSavedChanges ->
+            [ Text "Speichere oder verwirf zuerst deine ungespeicherten Änderungen, bevor du eine Vorlage anwendest." ]
+
+        PresetDeckCount { decks } ->
+            [ decks |> String.fromInt |> Text
+            , if decks == 1 then
+                Text " Deck"
+
+              else
+                Text " Decks"
+            ]
+
         HandSize ->
             [ Text "Größe der Hand" ]
 

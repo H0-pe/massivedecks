@@ -271,6 +271,16 @@ type MdString
     | ConfigureRules -- A name for the section of the configuration screen for changing the rules for the game.
     | ConfigureTimeLimits -- A name for the section of the configuration screen for changing the time limits for the game.
     | ConfigurePrivacy -- A name for the section of the configuration screen for changing the settings for the game.
+    | ConfigurePresets -- A name for the section of the configuration screen for saving and applying presets (saved game settings).
+    | PresetsDescription -- An explanation of what presets are and where they are stored.
+    | PresetNameLabel -- A label for the input for the name of a new preset.
+    | SavePreset -- The action of saving the current game settings as a preset.
+    | ApplyPresetWholeGame -- The action of applying all of a preset's settings, replacing the current decks.
+    | ApplyPresetDecksOnly -- The action of adding only the decks from a preset to the game.
+    | DeletePreset -- The action of deleting a preset.
+    | NoPresets -- A message shown when no presets have been saved yet.
+    | PresetNeedsSavedChanges -- A message explaining unsaved changes must be saved or reverted before applying a preset.
+    | PresetDeckCount { decks : Int } -- A short description of how many decks a preset contains.
     | HandSize -- The name of the rule defining how many cards a player can hold in their hand.
     | HandSizeDescription -- The description of the above rule.
     | ScoreLimit -- The name of the rule defining how many points a player has to accumulate to win the game.

@@ -32,6 +32,7 @@ import MassiveDecks.Pages.Lobby.Configure.Decks.Model as Decks
 import MassiveDecks.Pages.Lobby.Configure.Diff as Diff
 import MassiveDecks.Pages.Lobby.Configure.Messages exposing (..)
 import MassiveDecks.Pages.Lobby.Configure.Model as Config exposing (..)
+import MassiveDecks.Pages.Lobby.Configure.Presets as Presets
 import MassiveDecks.Pages.Lobby.Configure.Privacy as Privacy
 import MassiveDecks.Pages.Lobby.Configure.Privacy.Model as Privacy
 import MassiveDecks.Pages.Lobby.Configure.Rules as Rules
@@ -45,6 +46,7 @@ import MassiveDecks.Pages.Lobby.GameCode as GameCode exposing (GameCode)
 import MassiveDecks.Pages.Lobby.Invite as Invite
 import MassiveDecks.Pages.Lobby.Messages as Lobby
 import MassiveDecks.Pages.Lobby.Model as Lobby exposing (Lobby)
+import MassiveDecks.Settings as Settings
 import MassiveDecks.Strings as Strings exposing (MdString)
 import MassiveDecks.Strings.Languages as Lang
 import MassiveDecks.User as User exposing (User)
@@ -64,6 +66,7 @@ init shared config =
     , decks = Decks.init shared
     , passwordVisible = False
     , conflicts = []
+    , presetName = ""
     }
 
 
@@ -146,6 +149,42 @@ update shared msg model config =
         SetPasswordVisibility visible ->
             ( { model | passwordVisible = visible }, shared, Cmd.none )
 
+        SetPresetName presetName ->
+            ( { model | presetName = presetName }, shared, Cmd.none )
+
+        SavePreset ->
+            let
+                presetName =
+                    String.trim model.presetName
+            in
+            if presetName == "" then
+                ( model, shared, Cmd.none )
+
+            else
+                let
+                    ( settings, cmd ) =
+                        Settings.savePreset (Presets.fromConfig presetName config) shared.settings
+                in
+                ( { model | presetName = "" }, { shared | settings = settings }, cmd )
+
+        ApplyPreset scope preset ->
+            -- Only with no unsaved local changes, so the server's update simply replaces the local config.
+            if model.localConfig == config then
+                ( model
+                , shared
+                , Presets.patch scope preset config |> Maybe.map Actions.configure |> Maybe.withDefault Cmd.none
+                )
+
+            else
+                ( model, shared, Cmd.none )
+
+        DeletePreset presetName ->
+            let
+                ( settings, cmd ) =
+                    Settings.deletePreset presetName shared.settings
+            in
+            ( model, { shared | settings = settings }, cmd )
+
 
 view : (Msg -> msg) -> (Lobby.Msg -> msg) -> Shared -> Maybe msg -> Message msg -> GameCode -> Lobby.LobbyAndConfigure -> Html msg
 view wrap wrapLobby shared return disabledReason gameCode { lobby, configure } =
@@ -189,6 +228,9 @@ view wrap wrapLobby shared return disabledReason gameCode { lobby, configure } =
 
                 Privacy ->
                     Privacy.All |> PrivacyId |> getComponent |> Maybe.map viewComponent |> Maybe.withDefault []
+
+                Presets ->
+                    [ Presets.view wrap shared model lobby.config canEdit ]
 
         viewReturnButton msg =
             Button.viewWithAttrs
@@ -624,7 +666,7 @@ startGameProblems shared wrap wrapLobby users model remote =
 
 tabs : List Tab
 tabs =
-    [ Decks, Rules, Stages, Privacy ]
+    [ Decks, Rules, Stages, Privacy, Presets ]
 
 
 tab : Shared -> Tab -> Tabs.TabModel msg
@@ -648,3 +690,6 @@ tabName target =
 
         Privacy ->
             Strings.ConfigurePrivacy
+
+        Presets ->
+            Strings.ConfigurePresets

@@ -1,6 +1,7 @@
 module MassiveDecks.Settings.Model exposing
     ( CardSize(..)
     , Model
+    , Preset
     , Settings
     , cardSizeFromValue
     , cardSizeToValue
@@ -8,6 +9,7 @@ module MassiveDecks.Settings.Model exposing
 
 import Dict exposing (Dict)
 import MassiveDecks.Card.Source.Model as Source
+import MassiveDecks.Game.Rules exposing (Rules)
 import MassiveDecks.Notifications.Model as Notifications
 import MassiveDecks.Pages.Lobby.Model as Lobby
 import MassiveDecks.Speech as Speech
@@ -35,6 +37,19 @@ type alias Settings =
     , speech : Speech.Settings
     , notifications : Notifications.Settings
     , autoAdvance : Maybe Bool
+    , presets : List Preset
+    }
+
+
+{-| A saved lobby configuration that can be applied to new games.
+The password is deliberately not stored.
+-}
+type alias Preset =
+    { name : String
+    , rules : Rules
+    , public : Bool
+    , audienceMode : Bool
+    , decks : List Source.External
     }
 
 

@@ -203,6 +203,17 @@ settings =
         |> Json.optional "speech" speech Speech.default
         |> Json.optional "notifications" notifications Notifications.default
         |> Json.optional "autoAdvance" (Json.bool |> Json.map Just) Nothing
+        |> Json.optional "presets" (Json.list preset) []
+
+
+preset : Json.Decoder Settings.Preset
+preset =
+    Json.map5 Settings.Preset
+        (Json.field "name" Json.string)
+        (Json.field "rules" rules)
+        (Json.field "public" Json.bool)
+        (Json.field "audienceMode" Json.bool)
+        (Json.field "decks" (Json.list externalSource))
 
 
 notifications : Json.Decoder Notifications.Settings

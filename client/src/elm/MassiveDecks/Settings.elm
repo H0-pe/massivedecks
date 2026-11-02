@@ -2,8 +2,10 @@ module MassiveDecks.Settings exposing
     ( auths
     , defaults
     , init
+    , deletePreset
     , onAddDeck
     , onJoinLobby
+    , savePreset
     , onTokenUpdate
     , removeToken
     , update
@@ -81,6 +83,7 @@ defaults =
     , speech = Speech.default
     , notifications = Notifications.default
     , autoAdvance = Nothing
+    , presets = []
     }
 
 
@@ -202,6 +205,37 @@ onAddDeck source model =
 
         updatedSettings =
             { settings | recentDecks = newRecentDecks }
+    in
+    ( { model | settings = updatedSettings }, LocalStorage.store updatedSettings )
+
+
+{-| Save a preset, replacing any existing preset with the same name.
+-}
+savePreset : Preset -> Model -> ( Model, Cmd msg )
+savePreset preset model =
+    let
+        settings =
+            model.settings
+
+        others =
+            settings.presets |> List.filter (\p -> p.name /= preset.name)
+
+        updatedSettings =
+            { settings | presets = others ++ [ preset ] }
+    in
+    ( { model | settings = updatedSettings }, LocalStorage.store updatedSettings )
+
+
+{-| Delete the preset with the given name.
+-}
+deletePreset : String -> Model -> ( Model, Cmd msg )
+deletePreset name model =
+    let
+        settings =
+            model.settings
+
+        updatedSettings =
+            { settings | presets = settings.presets |> List.filter (\p -> p.name /= name) }
     in
     ( { model | settings = updatedSettings }, LocalStorage.store updatedSettings )
 

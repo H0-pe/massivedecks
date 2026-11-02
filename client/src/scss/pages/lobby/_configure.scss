@@ -291,3 +291,61 @@
     font-size: 0.8em;
   }
 }
+
+#presets-tab {
+  .description {
+    margin-top: 0;
+  }
+
+  .save-preset {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5em;
+
+    mwc-textfield {
+      flex: 1 1 12em;
+    }
+  }
+
+  .preset-warning {
+    color: colors.$error;
+  }
+
+  .preset-list {
+    list-style: none;
+    padding: 0;
+    margin: 1em 0;
+  }
+
+  .preset {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5em;
+    padding: 0.5em 0;
+    border-top: 1px solid colors.$secondary-background;
+  }
+
+  .preset-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .preset-name {
+    font-weight: bold;
+  }
+
+  .preset-details {
+    font-size: 0.8em;
+    opacity: 0.8;
+  }
+
+  .preset-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25em;
+  }
+}

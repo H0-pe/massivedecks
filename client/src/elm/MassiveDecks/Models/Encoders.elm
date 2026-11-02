@@ -309,6 +309,7 @@ settings s =
                   , ( "compactCards", s.cardSize |> cardSize )
                   , ( "speech", s.speech |> speech )
                   , ( "notifications", s.notifications |> notifications )
+                  , ( "presets", Json.list preset s.presets )
                   ]
                 , lun
                 , cl
@@ -316,6 +317,17 @@ settings s =
                 ]
     in
     Json.object fields
+
+
+preset : Settings.Preset -> Json.Value
+preset p =
+    Json.object
+        [ ( "name", Json.string p.name )
+        , ( "rules", rules p.rules )
+        , ( "public", Json.bool p.public )
+        , ( "audienceMode", Json.bool p.audienceMode )
+        , ( "decks", Json.list source p.decks )
+        ]
 
 
 notifications : Notifications.Settings -> Json.Value

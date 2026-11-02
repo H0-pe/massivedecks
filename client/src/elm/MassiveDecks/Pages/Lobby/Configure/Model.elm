@@ -26,6 +26,7 @@ type Tab
     | Rules
     | Stages
     | Privacy
+    | Presets
 
 
 type Id
@@ -43,6 +44,7 @@ type alias Model =
     , decks : Decks.Model
     , passwordVisible : Bool
     , conflicts : List Id
+    , presetName : String
     }
 
 
