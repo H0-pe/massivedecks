@@ -133,6 +133,12 @@ type MdString
     | VoteForPlay -- The action of voting for the selected play.
     | VoteCount { votes : Int } -- How many votes a play got.
     | TvVoting { voted : Int, total : Int } -- Shown on the TV while everyone votes, with how many have voted.
+    | TvCzarPicking { name : String } -- Shown on the TV while the named czar picks the black card.
+    | TvPlaying { played : Int, total : Int } -- Shown on the TV while players pick their answers, with how many have played.
+    | TvRevealing { name : String } -- Shown on the TV while the named player reveals and reads out the answers.
+    | TvCzarJudging { name : String } -- Shown on the TV while the named czar picks the winning answer.
+    | TvRoundWinner { name : String } -- Shown on the TV when the named player wins the round.
+    | TvGameOver -- Shown on the TV when the game is over.
     | SeeAlso { rule : MdString } -- A message telling the user to see another rule.
     | MustBeMoreThanOrEqualValidationError { min : Int } -- An error when a configuration value must be more than or equal to the given value.
     | MustBeLessThanOrEqualValidationError { max : Int } -- An error when a configuration value must be less than or equal to the given value.
@@ -353,6 +359,12 @@ type MdString
     | JudgePlay -- A description of the action of choosing a play to win the round.
     | LikePlay -- A description of the action of liking a play.
     | AdvanceRound -- A description of the action of finishing looking at the winner and advancing to the next round.
+    | PickCallShort -- A short button label for picking a call.
+    | WriteCallShort -- A short button label for writing a custom call.
+    | SubmitPlayShort -- A short button label for submitting a play.
+    | JudgePlayShort -- A short button label for picking the winning play.
+    | VoteForPlayShort -- A short button label for voting for a play.
+    | AdvanceRoundShort -- A short button label for advancing to the next round.
     | Starting -- A description of the stage of the round where the czar is making choices.
     | Playing -- A description of the stage of the round where players are playing responses into the round.
     | Revealing -- A description of the stage of the round where the czar is revealing the plays.

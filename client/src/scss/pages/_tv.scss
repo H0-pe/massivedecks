@@ -1,7 +1,9 @@
 @use "../_colors";
+@use "../_fonts";
+@use "../cards/_size";
 
-// TV mode: a shared big screen, read from across the room. Sizes scale with the screen (vmin), so the same layout
-// works on a 1080p or 4K TV and on a laptop.
+// TV mode: a shared big screen, read from across the room. Sizes are in vmin/vw so the same layout works on a 1080p
+// or 4K TV and on a laptop.
 
 #tv {
   position: fixed;
@@ -9,6 +11,8 @@
   overflow: hidden;
   display: flex;
   background: colors.$background;
+  color: colors.$text;
+  font-family: fonts.$general;
   font-size: 2.2vmin;
 
   .tv-loading {
@@ -17,12 +21,11 @@
   }
 
   .tv-code {
-    font-family: monospace;
-    font-weight: bold;
-    letter-spacing: 0.15em;
-    background: colors.$on-primary;
-    color: colors.$on-primary-dark;
-    padding: 0.1em 0.4em;
+    font-family: fonts.$display;
+    letter-spacing: 0.1em;
+    background: colors.$text;
+    color: colors.$background;
+    padding: 0.05em 0.35em;
     border-radius: 0.2em;
   }
 }
@@ -37,165 +40,407 @@
   text-align: center;
 
   h1 {
-    font-size: 3em;
-    margin: 0 0 0.5em;
+    font-family: fonts.$display;
+    font-size: 3.2em;
+    font-weight: normal;
+    margin: 0 0 0.6em;
   }
 
   .tv-join {
     display: flex;
     align-items: center;
-    gap: 2em;
+    gap: 2.5em;
   }
 
   .tv-join-text p {
     font-size: 1.6em;
     margin: 0.3em 0;
+    color: colors.$text-muted;
   }
 
   .tv-join-text .tv-code {
     display: inline-block;
-    font-size: 3em;
+    font-size: 3.5em;
     margin-top: 0.2em;
+    border-radius: 0.15em;
   }
 
   .tv-qr svg {
     width: 14em;
     height: 14em;
-    background: white;
-    padding: 0.5em;
-    border-radius: 0.5em;
+    background: colors.$text;
+    padding: 0.7em;
+    border-radius: 1em;
+    box-shadow: 0 0 0 0.3em colors.$primary;
   }
 
   .tv-players {
     list-style: none;
     padding: 0;
-    margin: 1.5em 0 0.5em;
+    margin: 1.8em 0 0.6em;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.6em;
 
     li {
-      font-size: 1.6em;
-      padding: 0.3em 0.8em;
+      font-size: 1.5em;
+      font-weight: 800;
+      padding: 0.35em 0.9em;
       border-radius: 1em;
-      background: colors.$primary-light;
-      color: colors.$on-primary-light;
+      background: colors.$surface;
+      border: 0.1em solid colors.$line;
     }
 
     li.host {
-      background: colors.$secondary-light;
-      color: colors.$on-secondary-light;
+      background: colors.$primary;
+      border-color: colors.$primary;
+      color: colors.$on-primary;
     }
   }
 
   .tv-waiting,
   .tv-hint {
     font-size: 1.4em;
-    opacity: 0.8;
+    color: colors.$text-muted;
   }
 }
 
-// During the game: the spectate table on the left, scores on the right.
-#tv #spectate.tv-stage {
-  position: relative;
-  flex: 1 1 auto;
-  // Plays sit on a circle (35em radius) around the call. Size it so the circle fits the stage (the viewport minus the
-  // sidebar) in both directions, including a stack of three cards (Packing Heat, haiku) straight above or below the
-  // call: 35em + half a 3-card stack (~17em) + byline (~2em) must fit in 50vh.
-  font-size: min(0.8vw, 0.85vh);
-}
-
-#tv .tv-sidebar {
-  flex: 0 0 22vw;
+// A round: header, the call left and the answers right, players along the bottom.
+#tv .tv-round {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1em;
-  padding: 1.5em 1em;
+  gap: 1.4em;
+  padding: 2em 2.6em 1.8em;
   box-sizing: border-box;
-  background: rgba(colors.$on-primary, 0.06);
+}
+
+#tv .tv-round-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1em;
+
+  h1 {
+    margin: 0;
+    font-family: fonts.$display;
+    font-weight: normal;
+    font-size: 2.2em;
+    line-height: 1.05;
+  }
+}
+
+#tv .tv-round-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  flex: none;
 
   .tv-timer {
-    align-self: center;
-    font-size: 3.5em;
-    font-weight: bold;
+    padding: 0.3em 0.8em;
+    border-radius: 1em;
+    background: colors.$surface;
+    border: 0.1em solid colors.$line;
+    font-weight: 800;
+    font-size: 1.3em;
     font-variant-numeric: tabular-nums;
   }
 
   .tv-timer.urgent {
     color: colors.$error;
+    border-color: colors.$error;
   }
 
-  .tv-voting {
+  .tv-code-chip {
+    padding: 0.25em 0.6em;
+    border-radius: 0.4em;
+    background: colors.$text;
+    color: colors.$background;
+    font-family: fonts.$display;
+    font-size: 1.2em;
+    letter-spacing: 0.1em;
+  }
+}
+
+#tv .tv-round-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2em;
+  align-items: stretch;
+}
+
+// The call is the normal card component, sized for the screen.
+#tv .tv-call {
+  display: flex;
+  align-items: flex-start;
+  font-size: 1.5vmin;
+  --card-aspect-ratio: #{size.$card-ratio};
+
+  .game-card {
     margin: 0;
+    width: 30em;
+
+    .content {
+      font-size: 2.3em;
+    }
+  }
+}
+
+#tv .tv-answers {
+  display: grid;
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 1em;
+  min-height: 0;
+  align-content: stretch;
+}
+
+#tv .tv-answer {
+  min-height: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.6em;
+  padding: 1em 1.2em;
+  border-radius: 0.9em;
+  background: colors.$text;
+  color: colors.$background;
+  overflow: hidden;
+
+  .tv-answer-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+
+    p {
+      margin: 0;
+      font-weight: 800;
+      font-size: 2.1em;
+      line-height: 1.15;
+    }
+
+    // Cards are stored as written; the card component capitalises the first letter, so do the same.
+    p::first-letter {
+      text-transform: uppercase;
+    }
+  }
+
+  &.highlight {
+    box-shadow: 0 0 0 0.25em colors.$primary;
+  }
+
+  &.winner {
+    background: colors.$secondary;
+  }
+
+  .tv-trophy {
     font-size: 1.4em;
-    font-weight: bold;
+  }
+
+  // Face down: played, or still to come.
+  &.back {
+    background: colors.$surface;
+    border: 0.12em solid colors.$line-strong;
+    align-items: center;
+    justify-content: center;
+
+    .tv-back-logo {
+      font-family: fonts.$display;
+      font-size: 2.4em;
+      color: colors.$line-strong;
+    }
+  }
+
+  &.back.waiting {
+    background: transparent;
+    border-style: dashed;
+  }
+}
+
+#tv .tv-answers.dense .tv-answer .tv-answer-text p {
+  font-size: 1.4em;
+}
+
+#tv .tv-answer-by {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+  font-size: 0.95em;
+  font-weight: 600;
+
+  .tv-answer-name {
+    color: inherit;
+    opacity: 0.75;
+  }
+}
+
+#tv .tv-votes {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+
+  .tv-votes-bar {
+    flex: 1;
+    height: 0.45em;
+    border-radius: 1em;
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  .tv-votes-fill {
+    height: 100%;
+    border-radius: 1em;
+    background: colors.$primary;
+  }
+
+  .tv-votes-count {
+    font-weight: 800;
+    white-space: nowrap;
+  }
+}
+
+#tv .tv-waiting-note {
+  grid-column: 1 / -1;
+  align-self: center;
+  justify-self: center;
+  font-size: 1.6em;
+  color: colors.$text-muted;
+}
+
+// Everyone along the bottom.
+#tv .tv-strip {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9em, 1fr));
+  gap: 0.7em;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    padding: 0.55em 0.8em;
+    border-radius: 0.8em;
+    background: colors.$surface;
+    border: 0.1em solid colors.$line;
+    min-width: 0;
+  }
+
+  .tv-chip-badge {
+    flex: none;
+    width: 1.8em;
+    height: 1.8em;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: colors.$text;
+    color: colors.$background;
+    font-weight: 800;
+  }
+
+  .tv-chip-name {
+    flex: 1;
+    min-width: 0;
+    font-weight: 800;
+    font-size: 1.15em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tv-chip-score {
+    font-family: fonts.$display;
+    font-size: 1.4em;
+    color: colors.$secondary;
+  }
+
+  li.done {
+    border-color: colors.$primary;
+
+    .tv-chip-badge {
+      background: colors.$primary;
+      color: colors.$on-primary;
+    }
+  }
+
+  li.czar .tv-chip-badge {
+    background: colors.$secondary;
+    color: colors.$on-secondary;
+  }
+
+  li.waiting {
+    opacity: 0.55;
+
+    .tv-chip-badge {
+      background: transparent;
+      color: colors.$text-muted;
+      border: 0.12em dashed colors.$text-faint;
+    }
+  }
+
+  li.away {
+    opacity: 0.35;
+  }
+}
+
+// The end: ranked list.
+#tv .tv-standings {
+  margin: auto;
+  width: min(60em, 90%);
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  h1 {
+    margin: 0 0 0.3em;
+    font-family: fonts.$display;
+    font-weight: normal;
+    font-size: 3.5em;
     text-align: center;
   }
 
-  .tv-scores {
-    flex: 1 1 auto;
-    overflow: hidden;
-
-    h2 {
-      margin: 0 0 0.5em;
-      font-size: 1.5em;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    li {
-      display: flex;
-      align-items: center;
-      gap: 0.5em;
-      font-size: 1.4em;
-      padding: 0.3em 0;
-      border-bottom: 1px solid colors.$secondary-background;
-    }
-
-    li.waiting {
-      opacity: 0.55;
-    }
-
-    li.away {
-      opacity: 0.35;
-    }
-
-    li.czar .tv-name {
-      font-weight: bold;
-    }
-
-    .tv-status {
-      width: 1.2em;
-      text-align: center;
-    }
-
-    .tv-name {
-      flex: 1 1 auto;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .tv-score {
-      font-weight: bold;
-      font-variant-numeric: tabular-nums;
-    }
-  }
-
-  .tv-corner-join {
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.3em;
-    font-size: 1.1em;
+    gap: 0.6em;
+  }
 
-    .tv-code {
-      font-size: 1.6em;
-    }
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+    padding: 0.7em 1.1em;
+    border-radius: 0.9em;
+    background: colors.$surface;
+    border: 0.1em solid colors.$line;
+    font-size: 1.6em;
+  }
+
+  li.winner {
+    background: colors.$secondary;
+    border-color: colors.$secondary;
+    color: colors.$on-secondary;
+  }
+
+  .tv-standing-badge {
+    width: 1.4em;
+    text-align: center;
+  }
+
+  .tv-standing-name {
+    flex: 1;
+    font-weight: 800;
+  }
+
+  .tv-standing-score {
+    font-family: fonts.$display;
   }
 }

@@ -382,6 +382,29 @@ translate _ mdString =
             , total |> String.fromInt |> Text
             ]
 
+        TvCzarPicking { name } ->
+            [ Text name, Text " is picking a card…" ]
+
+        TvPlaying { played, total } ->
+            [ Text "Pick your answers · "
+            , played |> String.fromInt |> Text
+            , Text " of "
+            , total |> String.fromInt |> Text
+            , Text " played"
+            ]
+
+        TvRevealing { name } ->
+            [ Text name, Text " reads them out" ]
+
+        TvCzarJudging { name } ->
+            [ Text name, Text " picks the winner" ]
+
+        TvRoundWinner { name } ->
+            [ Text name, Text " takes the point." ]
+
+        TvGameOver ->
+            [ Text "Game over" ]
+
         HouseRuleWinnersPickDescription ->
             [ Text "The winner of each round becomes the ", ref Czar, Text " for the next round." ]
 
@@ -1127,6 +1150,24 @@ translate _ mdString =
 
         AdvanceRound ->
             [ Text "Next round." ]
+
+        PickCallShort ->
+            [ Text "Pick this card" ]
+
+        WriteCallShort ->
+            [ Text "Write your own" ]
+
+        SubmitPlayShort ->
+            [ Text "Play" ]
+
+        JudgePlayShort ->
+            [ Text "Pick the winner" ]
+
+        VoteForPlayShort ->
+            [ Text "Vote" ]
+
+        AdvanceRoundShort ->
+            [ Text "Next round" ]
 
         Starting ->
             [ raw HouseRuleCzarChoices ]

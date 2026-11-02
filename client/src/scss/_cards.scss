@@ -3,11 +3,13 @@
 @use "cards/_sources";
 @use "cards/_call-editor";
 @use "cards/_colors";
+@use "_colors" as main-colors;
 
+// A drop shadow, plus a faint coloured edge when the card can be acted on.
 @mixin shadow($color: #000000) {
   .side {
-    box-shadow: 0.15em 0.15em 0.4em transparentize($color, 0.7),
-      -0.05em -0.05em 0.4em transparentize($color, 0.7);
+    box-shadow: 0 0.6em 1.4em rgba(0, 0, 0, 0.55),
+      0 0 0 0.12em transparentize($color, 0.75);
   }
 }
 
@@ -25,7 +27,7 @@
 
   text-rendering: optimizeLegibility;
   font-family: fonts.$card;
-  font-weight: bold;
+  font-weight: 800;
 
   p {
     margin: 0;
@@ -42,11 +44,14 @@
   &.response {
     --bg: #{colors.$response-background};
     --fg: #{colors.$response-color};
+    --edge: #{colors.$response-background};
   }
 
   &.call {
     --bg: #{colors.$call-background};
     --fg: #{colors.$call-color};
+    // A black card needs a visible edge on the dark ground.
+    --edge: #{colors.$call-border};
 
     p {
       display: flex;
@@ -81,6 +86,9 @@
         &.filled {
           display: contents;
           text-decoration: underline;
+          text-decoration-color: #{main-colors.$primary};
+          text-decoration-thickness: 0.12em;
+          text-underline-offset: 0.15em;
         }
 
         &.empty {
@@ -124,10 +132,9 @@
     box-sizing: border-box;
     background: var(--bg);
     color: var(--fg);
-    border-radius: 0.75em;
-    border: 0.3em solid var(--bg);
-    box-shadow: 0.15em 0.15em 0.4em rgba(0, 0, 0, 0.3),
-      -0.05em -0.05em 0.4em rgba(0, 0, 0, 0.3);
+    border-radius: 0.9em;
+    border: 0.12em solid var(--edge, var(--bg));
+    box-shadow: 0 0.6em 1.4em rgba(0, 0, 0, 0.55);
     padding: 1em;
     backface-visibility: hidden;
     transform: rotateX(0deg);
@@ -159,7 +166,7 @@
 
   .content {
     font-size: 1.6em;
-    font-weight: 700;
+    font-weight: 800;
     line-height: 1.4em;
   }
 
@@ -263,20 +270,19 @@
 .show-slot-indices .game-card {
   &[data-picked-for-slot-index]::after {
     position: absolute;
-    left: calc(50% - 0.5em);
-    top: calc(50% - 0.5em);
+    right: 0.4em;
+    bottom: 0.4em;
 
     content: attr(data-picked-for-slot-index);
     display: block;
-    color: var(--bg);
-    background-color: var(--fg);
-    font-size: 3em;
+    color: #{main-colors.$on-primary};
+    background-color: #{main-colors.$primary};
+    font-size: 2em;
     border-radius: 1em;
-    width: 1em;
-    height: 1em;
+    width: 1.2em;
+    height: 1.2em;
     text-align: center;
-    line-height: 1em;
-    opacity: 0.25;
+    line-height: 1.2em;
   }
 
   .slot[data-slot-index].empty::after {

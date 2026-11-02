@@ -29,7 +29,7 @@
     align-items: center;
     justify-content: center;
     z-index: 999;
-    background-color: transparentize(#cccccc, 0.3);
+    background-color: transparentize(#0e0e10, 0.25);
     font-size: 2em;
   }
 
@@ -116,7 +116,7 @@
     width: size.$card-width;
     margin: 0.5em;
     font-size: 0.7em;
-    color: #666677;
+    color: colors.$text-muted;
     hyphens: none;
 
     figcaption {

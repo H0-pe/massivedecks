@@ -410,6 +410,24 @@ translate _ mdString =
         TvVoting _ ->
             [ Missing ]
 
+        TvCzarPicking _ ->
+            [ Missing ]
+
+        TvPlaying _ ->
+            [ Missing ]
+
+        TvRevealing _ ->
+            [ Missing ]
+
+        TvCzarJudging _ ->
+            [ Missing ]
+
+        TvRoundWinner _ ->
+            [ Missing ]
+
+        TvGameOver ->
+            [ Missing ]
+
         -- TODO: Translate
         HouseRuleWinnersPickDescription ->
             [ Missing ]
@@ -1152,6 +1170,24 @@ translate _ mdString =
 
         AdvanceRound ->
             [ Text "Próxima partida." ]
+
+        PickCallShort ->
+            [ Missing ]
+
+        WriteCallShort ->
+            [ Missing ]
+
+        SubmitPlayShort ->
+            [ Missing ]
+
+        JudgePlayShort ->
+            [ Missing ]
+
+        VoteForPlayShort ->
+            [ Missing ]
+
+        AdvanceRoundShort ->
+            [ Missing ]
 
         -- TODO: Translate
         Starting ->

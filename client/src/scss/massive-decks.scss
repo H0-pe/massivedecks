@@ -21,8 +21,8 @@ $min-page-width: 320px;
 }
 
 body {
-  color: colors.$on-primary;
-  background: colors.$background url(../../assets/images/background.svg) repeat;
+  color: colors.$text;
+  background: colors.$background;
   margin: 0;
   padding: 0;
   font-size: 18px;
@@ -97,8 +97,8 @@ a,
   }
 
   &.normal {
-    --mdc-theme-secondary: #{colors.$card};
-    --mdc-theme-on-secondary: #{colors.$primary};
+    --mdc-theme-secondary: #{colors.$surface-raised};
+    --mdc-theme-on-secondary: #{colors.$text};
   }
 }
 
@@ -222,7 +222,7 @@ a,
 
 .warning {
   @include message;
-  color: #6f6401;
+  color: colors.$secondary;
 }
 
 .fixes {

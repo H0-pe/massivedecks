@@ -15,6 +15,9 @@ still open the TV view of a game they are in.
 -}
 
 import Dict exposing (Dict)
+import MassiveDecks.Card.Call as Call
+import MassiveDecks.Card.Model as Card
+import MassiveDecks.Card.Parts as Parts
 import FontAwesome as Icon
 import Html exposing (Html)
 import Html.Attributes as HtmlA
@@ -29,8 +32,6 @@ import MassiveDecks.Pages.Lobby.Actions as Actions
 import MassiveDecks.Pages.Lobby.GameCode as GameCode exposing (GameCode)
 import MassiveDecks.Pages.Lobby.Model as Lobby exposing (Lobby)
 import MassiveDecks.Pages.Lobby.Spectate as Spectate
-import MassiveDecks.Pages.Lobby.Spectate.Stages.Postgame as Postgame
-import MassiveDecks.Pages.Lobby.Spectate.Stages.Round as SpectateRound
 import MassiveDecks.Pages.Route as Route
 import MassiveDecks.Pages.Start.Route as Start
 import MassiveDecks.Strings as Strings
@@ -212,49 +213,28 @@ viewWaitingRoom shared gameCode lobby =
 
 
 viewGame : (Game.Msg -> msg) -> Shared -> Lobby.Model -> Lobby -> Game.Model -> List (Html msg)
-viewGame wrapGame shared model lobby game =
-    let
-        isPlayer id =
-            lobby.users |> Dict.get id |> Maybe.map (\u -> u.role == User.Player) |> Maybe.withDefault False
+viewGame _ shared model lobby game =
+    case game.game.winner of
+        Just winner ->
+            viewStandings shared lobby game winner
 
-        stage =
-            case game.game.winner of
-                Just winner ->
-                    -- The client's player list includes spectators (like the TV itself); keep them off the podium.
-                    Postgame.view shared lobby (game.game |> (\g -> { g | players = g.players |> Dict.filter (\id _ -> isPlayer id) })) winner
-
-                Nothing ->
-                    SpectateRound.view wrapGame shared lobby.config lobby.users game
-
-        timeLeft =
-            model.timeAnchor |> Maybe.andThen (\anchor -> Game.secondsLeft anchor game)
-
-        timer =
-            case ( game.game.winner, timeLeft |> Maybe.andThen (\s -> s |> Maybe.justIf (s > 0)) ) of
-                ( Nothing, Just seconds ) ->
-                    Html.div [ HtmlA.classList [ ( "tv-timer", True ), ( "urgent", seconds <= 10 ) ] ]
-                        [ Html.text (String.fromInt seconds) ]
-
-                _ ->
-                    Html.text ""
-    in
-    [ Html.div [ HtmlA.id "spectate", HtmlA.class "tv-stage" ] stage
-    , Html.aside [ HtmlA.class "tv-sidebar" ]
-        [ timer
-        , viewScores shared lobby game
-        , Html.div [ HtmlA.class "tv-corner-join" ]
-            [ Html.text (Spectate.stripProtocol shared.origin)
-            , Html.span [ HtmlA.class "tv-code" ] [ Html.text (GameCode.toString model.route.gameCode) ]
-            ]
-        ]
-    ]
+        Nothing ->
+            viewRound shared model lobby game
 
 
-viewScores : Shared -> Lobby -> Game.Model -> Html msg
-viewScores shared lobby game =
+{-| One round on the big screen: the call large on the left, the answers in a grid on the right, everyone below.
+-}
+viewRound : Shared -> Lobby.Model -> Lobby -> Game.Model -> List (Html msg)
+viewRound shared model lobby game =
     let
         round =
             game.game.round
+
+        nameOf id =
+            lobby.users |> Dict.get id |> Maybe.map .name |> Maybe.withDefault "?"
+
+        czarName =
+            nameOf round.czar
 
         voting =
             lobby.config.rules.houseRules.godIsDead /= Nothing
@@ -265,7 +245,211 @@ viewScores shared lobby game =
                 |> Dict.keys
                 |> Set.fromList
 
-        -- Who still has to act in this stage (play, or vote with "God Is Dead"), and who already has.
+        timeLeft =
+            model.timeAnchor
+                |> Maybe.andThen (\anchor -> Game.secondsLeft anchor game)
+                |> Maybe.andThen (\s -> s |> Maybe.justIf (s > 0))
+
+        timer =
+            case timeLeft of
+                Just seconds ->
+                    Html.span [ HtmlA.classList [ ( "tv-timer", True ), ( "urgent", seconds <= 10 ) ] ]
+                        [ Html.text (formatSeconds seconds) ]
+
+                Nothing ->
+                    Html.text ""
+
+        ( headline, call, answers ) =
+            case round.stage of
+                Round.S _ ->
+                    ( Strings.TvCzarPicking { name = czarName }
+                    , Call.viewUnknown shared []
+                    , [ Html.div [ HtmlA.class "tv-waiting-note" ] [ Strings.TvCzarPicking { name = czarName } |> Lang.html shared ] ]
+                    )
+
+                Round.P playing ->
+                    ( Strings.TvPlaying { played = Set.size playing.played, total = Set.size round.players }
+                    , viewCall shared lobby Dict.empty playing.call
+                    , round.players
+                        |> Set.toList
+                        |> List.map (\id -> viewBack (Set.member id playing.played))
+                    )
+
+                Round.R revealing ->
+                    let
+                        fills =
+                            revealing.plays
+                                |> List.filter (\p -> Just p.id == revealing.lastRevealed)
+                                |> List.head
+                                |> Maybe.andThen .responses
+                                |> Maybe.map Parts.fillsFromPlay
+                                |> Maybe.withDefault Dict.empty
+                    in
+                    ( Strings.TvRevealing { name = czarName }
+                    , viewCall shared lobby fills revealing.call
+                    , revealing.plays
+                        |> List.map
+                            (\p ->
+                                case p.responses of
+                                    Just responses ->
+                                        viewAnswer shared (Just p.id == revealing.lastRevealed) False Nothing Nothing responses
+
+                                    Nothing ->
+                                        viewBack True
+                            )
+                    )
+
+                Round.J judging ->
+                    ( if voting then
+                        Strings.TvVoting { voted = Set.size judging.voted, total = Set.size humanPlayers }
+
+                      else
+                        Strings.TvCzarJudging { name = czarName }
+                    , viewCall shared lobby Dict.empty judging.call
+                    , judging.plays |> List.map (\p -> viewAnswer shared False False Nothing Nothing p.responses)
+                    )
+
+                Round.C complete ->
+                    let
+                        -- The winner is a player, so find their play.
+                        winning =
+                            complete.plays |> Dict.values |> List.filter (\p -> p.playedBy == complete.winner) |> List.head
+
+                        fills =
+                            winning |> Maybe.map (.play >> Parts.fillsFromPlay) |> Maybe.withDefault Dict.empty
+
+                        totalVotes =
+                            complete.plays |> Dict.values |> List.filterMap .votes |> List.sum
+
+                        answer playId =
+                            complete.plays
+                                |> Dict.get playId
+                                |> Maybe.map
+                                    (\p ->
+                                        viewAnswer shared
+                                            (p.playedBy == complete.winner)
+                                            True
+                                            (Just (nameOf p.playedBy))
+                                            (p.votes |> Maybe.map (\v -> ( v, totalVotes )))
+                                            p.play
+                                    )
+                    in
+                    ( Strings.TvRoundWinner { name = winning |> Maybe.map (.playedBy >> nameOf) |> Maybe.withDefault "?" }
+                    , viewCall shared lobby fills complete.call
+                    , complete.playOrder |> List.filterMap answer
+                    )
+
+        columns =
+            case List.length answers of
+                n ->
+                    if n <= 1 then
+                        1
+
+                    else if n <= 4 then
+                        2
+
+                    else if n <= 9 then
+                        3
+
+                    else
+                        4
+    in
+    [ Html.div [ HtmlA.class "tv-round" ]
+        [ Html.header [ HtmlA.class "tv-round-header" ]
+            [ Html.h1 [] [ headline |> Lang.html shared ]
+            , Html.div [ HtmlA.class "tv-round-meta" ]
+                [ timer
+                , Html.span [ HtmlA.class "tv-code-chip" ] [ Html.text (GameCode.toString model.route.gameCode) ]
+                ]
+            ]
+        , Html.main_ [ HtmlA.class "tv-round-main" ]
+            [ Html.div [ HtmlA.class "tv-call" ] [ call ]
+            , Html.div
+                [ HtmlA.classList [ ( "tv-answers", True ), ( "dense", List.length answers > 6 ) ]
+                , HtmlA.style "grid-template-columns" ("repeat(" ++ String.fromInt columns ++ ", minmax(0, 1fr))")
+                ]
+                answers
+            ]
+        , viewPlayerStrip shared lobby game voting humanPlayers
+        ]
+    ]
+
+
+formatSeconds : Int -> String
+formatSeconds seconds =
+    String.fromInt (seconds // 60) ++ ":" ++ String.padLeft 2 '0' (String.fromInt (modBy 60 seconds))
+
+
+viewCall : Shared -> Lobby -> Dict Int String -> Card.Call -> Html msg
+viewCall shared lobby fills call =
+    Call.viewFilled shared lobby.config Card.Front [] (always []) fills call
+
+
+{-| A face-down answer: played (solid) or still waiting (dashed).
+-}
+viewBack : Bool -> Html msg
+viewBack played =
+    Html.div [ HtmlA.classList [ ( "tv-answer", True ), ( "back", True ), ( "waiting", not played ) ] ]
+        [ Html.span [ HtmlA.class "tv-back-logo" ] [ Html.text "MD" ] ]
+
+
+{-| An answer tile. Multi-card plays show each card on its own line.
+-}
+viewAnswer : Shared -> Bool -> Bool -> Maybe String -> Maybe ( Int, Int ) -> List Card.Response -> Html msg
+viewAnswer shared highlight complete by votes responses =
+    let
+        lines =
+            responses |> List.map (\r -> Html.p [] [ Html.text r.body ])
+
+        byline =
+            case ( by, votes ) of
+                ( Nothing, Nothing ) ->
+                    Html.text ""
+
+                _ ->
+                    Html.div [ HtmlA.class "tv-answer-by" ]
+                        [ votes |> Maybe.map (viewVotes shared) |> Maybe.withDefault (Html.text "")
+                        , by |> Maybe.map (\name -> Html.span [ HtmlA.class "tv-answer-name" ] [ Html.text name ]) |> Maybe.withDefault (Html.text "")
+                        ]
+
+        trophy =
+            if highlight && complete then
+                Html.span [ HtmlA.class "tv-trophy" ] [ Icon.view Icon.win ]
+
+            else
+                Html.text ""
+    in
+    Html.div [ HtmlA.classList [ ( "tv-answer", True ), ( "highlight", highlight ), ( "winner", highlight && complete ) ] ]
+        [ Html.div [ HtmlA.class "tv-answer-text" ] (trophy :: lines)
+        , byline
+        ]
+
+
+viewVotes : Shared -> ( Int, Int ) -> Html msg
+viewVotes shared ( votes, total ) =
+    let
+        share =
+            if total > 0 then
+                toFloat votes / toFloat total * 100
+
+            else
+                0
+    in
+    Html.div [ HtmlA.class "tv-votes" ]
+        [ Html.div [ HtmlA.class "tv-votes-bar" ]
+            [ Html.div [ HtmlA.class "tv-votes-fill", HtmlA.style "width" (String.fromFloat share ++ "%") ] [] ]
+        , Html.span [ HtmlA.class "tv-votes-count" ] [ Strings.VoteCount { votes = votes } |> Lang.html shared ]
+        ]
+
+
+{-| Everyone in the game along the bottom: who still has to act, who is czar, and the scores.
+-}
+viewPlayerStrip : Shared -> Lobby -> Game.Model -> Bool -> Set.Set User.Id -> Html msg
+viewPlayerStrip _ lobby game voting humanPlayers =
+    let
+        round =
+            game.game.round
+
         ( isActive, participants, done ) =
             case round.stage of
                 Round.P playing ->
@@ -281,64 +465,85 @@ viewScores shared lobby game =
                 _ ->
                     ( False, Set.empty, Set.empty )
 
-        votingStatus =
-            case round.stage of
-                Round.J judging ->
-                    if voting then
-                        Html.p [ HtmlA.class "tv-voting" ]
-                            [ Strings.TvVoting { voted = Set.size judging.voted, total = Set.size humanPlayers } |> Lang.html shared ]
-
-                    else
-                        Html.text ""
-
-                _ ->
-                    Html.text ""
-
         -- The player order and the client's player list also contain spectators (like the TV itself).
         viewPlayer id =
-            Maybe.map2 (viewScore id)
+            Maybe.map2 (viewChip id)
                 (lobby.users |> Dict.get id |> Maybe.andThen (\u -> u |> Maybe.justIf (u.role == User.Player)))
                 (game.game.players |> Dict.get id)
 
-        gameOver =
-            game.game.winner /= Nothing
-
-        viewScore id user player =
+        viewChip id user player =
             let
-                status =
-                    if gameOver then
-                        Html.text ""
+                isDone =
+                    isActive && Set.member id done
 
-                    else if isActive && Set.member id done then
-                        Icon.accept |> Icon.view
+                isWaiting =
+                    isActive && Set.member id participants && not isDone
 
-                    else if id == round.czar then
-                        Icon.czar |> Icon.view
+                -- When everyone votes there is no czar to show.
+                isCzar =
+                    id == round.czar && not voting
+
+                badge =
+                    if isDone then
+                        Icon.view Icon.accept
+
+                    else if isCzar then
+                        Icon.view Icon.czar
 
                     else
-                        Html.text ""
+                        Html.text (user.name |> String.left 1 |> String.toUpper)
             in
             ( id
             , Html.li
                 [ HtmlA.classList
-                    [ ( "czar", id == round.czar && not gameOver )
-                    , ( "played", isActive && Set.member id done )
-                    , ( "waiting", isActive && Set.member id participants && not (Set.member id done) )
+                    [ ( "done", isDone )
+                    , ( "waiting", isWaiting )
+                    , ( "czar", isCzar )
                     , ( "away", user.presence == User.Left )
                     ]
                 ]
-                [ Html.span [ HtmlA.class "tv-status" ] [ status ]
-                , Html.span [ HtmlA.class "tv-name" ] [ Html.text user.name ]
-                , Html.span [ HtmlA.class "tv-score" ] [ Html.text (String.fromInt player.score) ]
+                [ Html.span [ HtmlA.class "tv-chip-badge" ] [ badge ]
+                , Html.span [ HtmlA.class "tv-chip-name" ] [ Html.text user.name ]
+                , Html.span [ HtmlA.class "tv-chip-score" ] [ Html.text (String.fromInt player.score) ]
                 ]
             )
-
-        ordered =
-            game.game.playerOrder
-                |> List.filterMap viewPlayer
     in
-    Html.div [ HtmlA.class "tv-scores" ]
-        [ votingStatus
-        , Html.h2 [] [ Strings.TvScores |> Lang.html shared ]
-        , HtmlK.ul [] ordered
+    HtmlK.ul [ HtmlA.class "tv-strip" ] (game.game.playerOrder |> List.filterMap viewPlayer)
+
+
+{-| The end of the game: everyone ranked by score, winners on top.
+-}
+viewStandings : Shared -> Lobby -> Game.Model -> Set.Set User.Id -> List (Html msg)
+viewStandings shared lobby game winners =
+    let
+        ranked =
+            game.game.players
+                |> Dict.toList
+                |> List.filterMap
+                    (\( id, p ) ->
+                        lobby.users
+                            |> Dict.get id
+                            |> Maybe.andThen (\u -> ( id, u, p ) |> Maybe.justIf (u.role == User.Player))
+                    )
+                |> List.sortBy (\( _, _, p ) -> -p.score)
+
+        viewRow ( id, user, player ) =
+            ( id
+            , Html.li [ HtmlA.classList [ ( "winner", Set.member id winners ) ] ]
+                [ Html.span [ HtmlA.class "tv-standing-badge" ]
+                    [ if Set.member id winners then
+                        Icon.view Icon.win
+
+                      else
+                        Html.text ""
+                    ]
+                , Html.span [ HtmlA.class "tv-standing-name" ] [ Html.text user.name ]
+                , Html.span [ HtmlA.class "tv-standing-score" ] [ Html.text (String.fromInt player.score) ]
+                ]
+            )
+    in
+    [ Html.div [ HtmlA.class "tv-standings" ]
+        [ Html.h1 [] [ Strings.TvGameOver |> Lang.html shared ]
+        , HtmlK.ol [] (ranked |> List.map viewRow)
         ]
+    ]

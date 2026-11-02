@@ -67,13 +67,51 @@ viewSingle wrap shared visible action =
 
                 Discard ->
                     IconView Icon.discard normal Fab.Mini Strings.HouseRuleNeverHaveIEver Game.Discard
+        label =
+            title |> Lang.string shared
+
+        -- The wrapper renders an extended FAB's label as a child the web component ignores, so set it directly.
+        extended =
+            case shortLabel action of
+                Just short ->
+                    [ HtmlA.attribute "extended" "", HtmlA.attribute "label" (short |> Lang.string shared) ]
+
+                Nothing ->
+                    []
     in
     Fab.view
         type_
-        (title |> Lang.string shared)
+        label
         (icon |> Icon.view)
         (onClick |> wrap |> Just)
-        (HtmlA.classList [ ( "action", True ), ( "exited", visible /= Just action ) ] :: attrs)
+        (HtmlA.classList [ ( "action", True ), ( "exited", visible /= Just action ) ] :: extended ++ attrs)
+
+
+{-| A short label shown on the button for the actions the game is waiting on.
+-}
+shortLabel : Action -> Maybe MdString
+shortLabel action =
+    case action of
+        PickCall ->
+            Just Strings.PickCallShort
+
+        EditCall ->
+            Just Strings.WriteCallShort
+
+        Submit ->
+            Just Strings.SubmitPlayShort
+
+        Judge ->
+            Just Strings.JudgePlayShort
+
+        Vote ->
+            Just Strings.VoteForPlayShort
+
+        Advance ->
+            Just Strings.AdvanceRoundShort
+
+        _ ->
+            Nothing
 
 
 type alias IconView msg =

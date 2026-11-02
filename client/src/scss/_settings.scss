@@ -31,7 +31,7 @@ div.settings-panel {
   padding: 0 1em 1em 1em;
   border-radius: 0.5em;
 
-  color: colors.$on-primary;
+  color: colors.$text;
 
   .title {
     display: flex;
@@ -62,7 +62,7 @@ div.settings-panel {
 
   hr {
     border: none;
-    border-top: 3px double #cccccc;
+    border-top: 3px double colors.$line-strong;
     margin: 0;
   }
 }

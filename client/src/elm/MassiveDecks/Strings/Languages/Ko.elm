@@ -383,6 +383,24 @@ translate _ mdString =
         TvVoting _ ->
             [ Missing ]
 
+        TvCzarPicking _ ->
+            [ Missing ]
+
+        TvPlaying _ ->
+            [ Missing ]
+
+        TvRevealing _ ->
+            [ Missing ]
+
+        TvCzarJudging _ ->
+            [ Missing ]
+
+        TvRoundWinner _ ->
+            [ Missing ]
+
+        TvGameOver ->
+            [ Missing ]
+
         HouseRuleWinnersPickDescription ->
             [ Text "각 라운드의 승자는 다음 라운드에 ", ref Czar, Text "가 됩니다." ]
 
@@ -1123,6 +1141,24 @@ translate _ mdString =
 
         AdvanceRound ->
             [ Text "다음 라운드" ]
+
+        PickCallShort ->
+            [ Missing ]
+
+        WriteCallShort ->
+            [ Missing ]
+
+        SubmitPlayShort ->
+            [ Missing ]
+
+        JudgePlayShort ->
+            [ Missing ]
+
+        VoteForPlayShort ->
+            [ Missing ]
+
+        AdvanceRoundShort ->
+            [ Missing ]
 
         Starting ->
             [ raw HouseRuleCzarChoices ]

@@ -1,28 +1,41 @@
 /// Single source of truth for colours in the application.
+/// Dark theme: near-black ground, cards in real black and white, a hot pink accent and yellow for points.
 
-$primary: #42a5f5;
-$on-primary: #212121;
-$primary-light: #80d6ff;
-$on-primary-light: #212121;
-$primary-dark: #0077c2;
-$on-primary-dark: #f5f5f5;
+// Text and surfaces.
+$text: #f4f1ea;
+$text-muted: #b9b5ac;
+$text-faint: #8a867e;
+$background: #0e0e10;
+$surface: #1a1a1e;
+$surface-raised: #24242a;
+$line: #2e2e36;
+$line-strong: #3a3a42;
 
-$secondary: #ff6122;
-$on-secondary: #212121;
-$secondary-light: #ff8a50;
-$on-secondary-light: #212121;
-$secondary-dark: #c41c00;
-$on-secondary-dark: #f5f5f5;
+// Accent (pink) for actions and selection.
+$primary: #ff4f79;
+$on-primary: #0e0e10;
+$primary-light: #ff7a9a;
+$on-primary-light: #0e0e10;
+$primary-dark: #d93a62;
+$on-primary-dark: #f4f1ea;
 
-$error: $secondary-dark;
-$on-error: $on-secondary-dark;
+// Points, winners and highlights (yellow).
+$secondary: #ffd23f;
+$on-secondary: #0e0e10;
+$secondary-light: #ffe07a;
+$on-secondary-light: #0e0e10;
+$secondary-dark: #e0b000;
+$on-secondary-dark: #0e0e10;
 
-$background: #e2e2e2;
+$error: #ff6b5c;
+$on-error: #0e0e10;
 
-$secondary-background: #cccccc;
+// Kept for existing uses: lines and subtle fills on the dark ground.
+$secondary-background: $line;
 
 $transparent: rgba(#ffffff, 0);
 
-$card: #ffffff;
+// Material "surface" (cards, dialogs, menus).
+$card: $surface;
 
-$many-decks: #00796b;
+$many-decks: #26a69a;

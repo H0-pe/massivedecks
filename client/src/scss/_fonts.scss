@@ -1,5 +1,40 @@
-$general: "Roboto", sans-serif;
-$card: "Helvetica Neue", "Nimbus Sans L", sans-serif;
+$general: "Archivo", "Helvetica Neue", sans-serif;
+$card: "Archivo", "Helvetica Neue", "Nimbus Sans L", sans-serif;
+$display: "Archivo Black", "Archivo", sans-serif;
+
+// Self-hosted (no requests to Google Fonts): body and cards in Archivo, big headings in Archivo Black.
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400;
+  src: url("~@fontsource/archivo/files/archivo-latin-400-normal.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 600;
+  src: url("~@fontsource/archivo/files/archivo-latin-600-normal.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 800;
+  src: url("~@fontsource/archivo/files/archivo-latin-800-normal.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Archivo Black";
+  font-style: normal;
+  font-weight: 400;
+  src: url("~@fontsource/archivo-black/files/archivo-black-latin-400-normal.woff2") format("woff2");
+  font-display: swap;
+}
 $game-code: "Source Code Pro", monospace;
 
 @font-face {

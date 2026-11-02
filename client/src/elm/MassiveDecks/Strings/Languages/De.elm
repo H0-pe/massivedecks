@@ -432,6 +432,29 @@ translate _ mdString =
             , total |> String.fromInt |> Text
             ]
 
+        TvCzarPicking { name } ->
+            [ Text name, Text " wählt eine Karte…" ]
+
+        TvPlaying { played, total } ->
+            [ Text "Wählt eure Antworten · "
+            , played |> String.fromInt |> Text
+            , Text " von "
+            , total |> String.fromInt |> Text
+            , Text " haben gespielt"
+            ]
+
+        TvRevealing { name } ->
+            [ Text name, Text " liest vor" ]
+
+        TvCzarJudging { name } ->
+            [ Text name, Text " wählt den Gewinner" ]
+
+        TvRoundWinner { name } ->
+            [ Text name, Text " holt den Punkt." ]
+
+        TvGameOver ->
+            [ Text "Spiel vorbei" ]
+
         -- TODO: Translate
         HouseRuleWinnersPickDescription ->
             [ Missing ]
@@ -1176,6 +1199,24 @@ translate _ mdString =
 
         AdvanceRound ->
             [ Text "Nächste Runde." ]
+
+        PickCallShort ->
+            [ Text "Diese Karte" ]
+
+        WriteCallShort ->
+            [ Text "Selbst schreiben" ]
+
+        SubmitPlayShort ->
+            [ Text "Ausspielen" ]
+
+        JudgePlayShort ->
+            [ Text "Gewinner wählen" ]
+
+        VoteForPlayShort ->
+            [ Text "Abstimmen" ]
+
+        AdvanceRoundShort ->
+            [ Text "Nächste Runde" ]
 
         -- TODO: Translate
         Starting ->

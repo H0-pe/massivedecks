@@ -442,6 +442,24 @@ translate maybeDeclCase mdString =
         TvVoting _ ->
             [ Missing ]
 
+        TvCzarPicking _ ->
+            [ Missing ]
+
+        TvPlaying _ ->
+            [ Missing ]
+
+        TvRevealing _ ->
+            [ Missing ]
+
+        TvCzarJudging _ ->
+            [ Missing ]
+
+        TvRoundWinner _ ->
+            [ Missing ]
+
+        TvGameOver ->
+            [ Missing ]
+
         -- TODO: Translate
         HouseRuleWinnersPickDescription ->
             [ Missing ]
@@ -1254,6 +1272,24 @@ translate maybeDeclCase mdString =
 
         AdvanceRound ->
             [ Text "Następna runda." ]
+
+        PickCallShort ->
+            [ Missing ]
+
+        WriteCallShort ->
+            [ Missing ]
+
+        SubmitPlayShort ->
+            [ Missing ]
+
+        JudgePlayShort ->
+            [ Missing ]
+
+        VoteForPlayShort ->
+            [ Missing ]
+
+        AdvanceRoundShort ->
+            [ Missing ]
 
         Starting ->
             [ raw HouseRuleCzarChoices ]

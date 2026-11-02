@@ -397,6 +397,24 @@ translate _ mdString =
         TvVoting _ ->
             [ Missing ]
 
+        TvCzarPicking _ ->
+            [ Missing ]
+
+        TvPlaying _ ->
+            [ Missing ]
+
+        TvRevealing _ ->
+            [ Missing ]
+
+        TvCzarJudging _ ->
+            [ Missing ]
+
+        TvRoundWinner _ ->
+            [ Missing ]
+
+        TvGameOver ->
+            [ Missing ]
+
         HouseRuleWinnersPickDescription ->
             [ Text "El ganador de cada ronda será el ", ref Czar, Text " durante la próxima ronda." ]
 
@@ -1141,6 +1159,24 @@ translate _ mdString =
 
         AdvanceRound ->
             [ Text "Siguiente ronda." ]
+
+        PickCallShort ->
+            [ Missing ]
+
+        WriteCallShort ->
+            [ Missing ]
+
+        SubmitPlayShort ->
+            [ Missing ]
+
+        JudgePlayShort ->
+            [ Missing ]
+
+        VoteForPlayShort ->
+            [ Missing ]
+
+        AdvanceRoundShort ->
+            [ Missing ]
 
         Starting ->
             [ raw HouseRuleCzarChoices ]

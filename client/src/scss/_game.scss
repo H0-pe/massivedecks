@@ -1,4 +1,5 @@
 @use "./_colors";
+@use "./_fonts";
 @use "./cards";
 @use "cards/_size";
 @use "./game/_judging";
@@ -24,6 +25,22 @@
     right: 1rem;
 
     z-index: 999;
+
+    --mdc-typography-button-font-family: #{fonts.$general};
+    --mdc-typography-button-font-weight: 800;
+    --mdc-typography-button-letter-spacing: 0.02em;
+    --mdc-typography-button-text-transform: none;
+    --mdc-typography-button-font-size: 1rem;
+  }
+
+  // On phones the labelled main action sits centred at the bottom, in easy reach of either thumb.
+  @media (max-width: 36rem) {
+    .action[extended] {
+      left: 0;
+      right: 0;
+      width: fit-content;
+      margin: 0 auto;
+    }
   }
 }
 
@@ -158,6 +175,7 @@ ol.card-set {
   &.picked {
     .side {
       border-color: colors.$primary;
+      box-shadow: 0 0 0 0.25em colors.$primary, 0 0.6em 1.4em rgba(0, 0, 0, 0.55);
     }
   }
 }
@@ -214,7 +232,7 @@ ol.card-set {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: transparentize(#cccccc, 0.3);
+  background-color: transparentize(#0e0e10, 0.25);
   font-size: 4em;
   text-align: center;
   z-index: 4;
@@ -228,7 +246,7 @@ ol.card-set {
   left: 0;
   z-index: 3;
 
-  background-color: transparentize(#cccccc, 0.3);
+  background-color: transparentize(#0e0e10, 0.25);
 
   display: flex;
   justify-content: center;
