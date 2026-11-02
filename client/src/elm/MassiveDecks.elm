@@ -83,7 +83,9 @@ init flags url key =
             , key = key
             , origin = Url.origin url
             , settings = initialisedSettings
-            , browserLanguage = Lang.findBestMatch browserLanguages
+            -- The cards are English, so the interface defaults to English rather than following the browser.
+            -- Players can still pick another language in the settings.
+            , browserLanguage = Nothing
             , castStatus = Cast.NoDevicesAvailable
             , speech = speech
             , notifications = Notifications.init
