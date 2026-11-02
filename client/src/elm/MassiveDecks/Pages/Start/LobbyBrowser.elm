@@ -29,7 +29,7 @@ import MassiveDecks.Strings.Languages as Lang
 import MassiveDecks.Util.Html as Html
 import MassiveDecks.Util.List as List
 import MassiveDecks.Util.Maybe as Maybe
-import Material.ListView as ListView
+import Ui.ListView as ListView
 
 
 {-| Set up the lobby browser.

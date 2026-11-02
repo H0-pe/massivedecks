@@ -4,7 +4,7 @@ module Ui.Select exposing
     , view
     )
 
-{-| A labelled drop-down: a native select, so phones show their own picker and long lists stay usable.
+{-| A labelled drop-down, drawn by the md-select element (src/ts/select.ts) so the open list matches the design too.
 -}
 
 import Html exposing (Html)
@@ -17,19 +17,32 @@ view : Model id msg -> List (ItemModel id) -> Html msg
 view model items =
     let
         viewItem item =
-            Html.option
-                [ item.id |> model.idToString |> HtmlA.value
-                , model.selected == Just item.id |> HtmlA.selected
+            Html.node "md-option"
+                [ item.id |> model.idToString |> HtmlA.attribute "value"
+                , HtmlA.attribute "label" item.label
+                , item.secondary |> Maybe.withDefault "" |> HtmlA.attribute "detail"
                 ]
-                [ Html.text (item.label ++ (item.secondary |> Maybe.map (\s -> " · " ++ s) |> Maybe.withDefault "")) ]
+                []
 
         onChange =
             Json.at [ "target", "value" ] Json.string |> Json.map (model.idFromString >> model.wrap) |> HtmlE.on "change"
+
+        disabled =
+            if model.disabled then
+                [ HtmlA.attribute "disabled" "" ]
+
+            else
+                []
     in
-    Html.label [ HtmlA.classList [ ( "ui-field", True ), ( "ui-select", True ), ( "disabled", model.disabled ) ] ]
-        [ Html.span [ HtmlA.class "ui-field-label" ] [ Html.text model.label ]
-        , Html.select (HtmlA.disabled model.disabled :: onChange :: model.attrs) (items |> List.map viewItem)
-        ]
+    Html.node "md-select"
+        (HtmlA.class "ui-select"
+            :: HtmlA.attribute "label" model.label
+            :: (model.selected |> Maybe.map model.idToString |> Maybe.withDefault "" |> HtmlA.attribute "value")
+            :: onChange
+            :: disabled
+            ++ model.attrs
+        )
+        (items |> List.map viewItem)
 
 
 {-| The things needed to render the select.
@@ -46,7 +59,7 @@ type alias Model id msg =
     }
 
 
-{-| One option: its text and an optional detail shown after it.
+{-| One option: its text and an optional detail shown under it.
 -}
 type alias ItemModel id =
     { id : id

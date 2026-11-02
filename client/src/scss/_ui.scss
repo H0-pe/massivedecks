@@ -7,7 +7,8 @@ $radius: 0.75rem;
 $field-height: 3.25rem;
 
 // Surfaces.
-.mdc-card.ui-card {
+// Ui.Card, and the settings panel which uses the same surface.
+.mdc-card {
   background: colors.$surface;
   color: colors.$text;
   border: 1px solid colors.$line;
@@ -97,39 +98,33 @@ $field-height: 3.25rem;
   }
 }
 
-.ui-select {
-  cursor: pointer;
+// Drop-downs are the md-select element (src/ts/select.ts), which draws itself from these colours.
+:root {
+  --md-font: #{fonts.$general};
+  --md-background: #{colors.$background};
+  --md-surface-raised: #{colors.$surface-raised};
+  --md-line: #{colors.$line};
+  --md-line-strong: #{colors.$line-strong};
+  --md-text: #{colors.$text};
+  --md-text-muted: #{colors.$text-muted};
+  --md-text-faint: #{colors.$text-faint};
+  --md-primary: #{colors.$primary};
+}
 
-  select {
-    appearance: none;
-    cursor: pointer;
-    padding-right: 1.75rem;
-    text-overflow: ellipsis;
-  }
+md-select {
+  display: block;
+  width: 100%;
+}
 
-  // A chevron instead of the platform's arrow.
-  &::after {
-    content: "";
-    position: absolute;
-    right: 1rem;
-    bottom: 1.05rem;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-right: 2px solid colors.$text-muted;
-    border-bottom: 2px solid colors.$text-muted;
-    transform: rotate(45deg);
-    pointer-events: none;
-  }
-
-  option {
-    background: colors.$surface-raised;
-    color: colors.$text;
-    font-weight: 600;
-  }
-
-  &.disabled select {
-    cursor: default;
-  }
+// Fields and drop-downs sharing a row with other controls take the remaining space. (The old Material components
+// carried a "primary" class for this; with these components that class lands on the inner input instead.)
+.multipart > .ui-field,
+.multipart > md-select,
+.multipart > .primary,
+.control > .ui-field,
+.control > md-select {
+  flex: 1 1 8em;
+  min-width: 0;
 }
 
 // An on/off toggle drawn over a real checkbox, so it works with the keyboard and screen readers.
@@ -432,21 +427,6 @@ $field-height: 3.25rem;
   gap: 0.35rem;
 }
 
-// Menus and lists are still Material web components; give them the dark surface.
-mwc-menu,
-mwc-list {
-  --mdc-theme-surface: #{colors.$surface-raised};
-  --mdc-theme-text-primary-on-background: #{colors.$text};
-  --mdc-menu-max-width: 20rem;
-  --mdc-shape-medium: 14px;
-}
-
-mwc-list-item {
-  --mdc-theme-text-primary-on-background: #{colors.$text};
-  font-family: fonts.$general;
-  font-weight: 600;
-}
-
 // Sections as a row of pills.
 .ui-tabs {
   display: flex;
@@ -486,5 +466,172 @@ mwc-list-item {
       outline: 2px solid colors.$text;
       outline-offset: 2px;
     }
+  }
+}
+
+// Lists (public games, menus).
+.ui-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ui-list-item {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.7rem;
+  color: colors.$text;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background: colors.$line;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$text;
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.45;
+    background: transparent;
+  }
+}
+
+div.ui-list-item {
+  cursor: default;
+
+  &:hover {
+    background: transparent;
+  }
+}
+
+a:has(> .ui-list-item) {
+  display: block;
+  background: none;
+}
+
+.ui-list-icon {
+  flex: none;
+  width: 1.25rem;
+  display: inline-flex;
+  justify-content: center;
+  color: colors.$text-muted;
+}
+
+.ui-list-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.ui-list-primary {
+  font-weight: 800;
+}
+
+.ui-list-secondary {
+  font-size: 0.8125rem;
+  color: colors.$text-muted;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ui-list-meta {
+  flex: none;
+  color: colors.$text-muted;
+}
+
+// Pop-up menus.
+.ui-menu-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.ui-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+}
+
+// Every menu opens aligned to the start of the button that opened it (those buttons all sit on the left), and never
+// wider than the screen.
+.ui-menu {
+  position: absolute;
+  z-index: 901;
+  min-width: 16rem;
+  max-width: min(22rem, calc(100vw - 1.5rem));
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+  margin: 0.35rem 0 0;
+  padding: 0.4rem;
+  list-style: none;
+  border-radius: 0.9rem;
+  border: 1px solid colors.$line-strong;
+  background: colors.$surface-raised;
+  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.6);
+  font-size: 0.9375rem;
+
+  &.bottom-start {
+    top: 100%;
+    left: 0;
+  }
+
+  &.bottom-end {
+    top: 100%;
+    left: 0;
+  }
+
+  &.top-start {
+    bottom: 100%;
+    left: 0;
+  }
+
+  &.top-end {
+    bottom: 100%;
+    left: 0;
+  }
+
+  // Menu entries that are links get no link highlight.
+  a {
+    display: block;
+    background: none;
+  }
+
+  li[role="separator"] {
+    height: 1px;
+    margin: 0.35rem 0.5rem;
+    background: colors.$line;
+  }
+
+  .ui-list-secondary {
+    white-space: normal;
+  }
+}
+
+// A thin progress bar (the round timer).
+.ui-progress {
+  height: 4px;
+  overflow: hidden;
+  background: colors.$line;
+
+  .ui-progress-bar {
+    height: 100%;
+    background: colors.$primary;
+    transition: width 0.25s linear;
+  }
+
+  &.closed {
+    display: none;
   }
 }

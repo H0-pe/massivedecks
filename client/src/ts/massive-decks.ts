@@ -1,6 +1,6 @@
 import "@webcomponents/webcomponentsjs/webcomponents-loader";
-import "../../elm-material/src/ts/material";
 import "./paper";
+import "./select";
 import "../scss/massive-decks.scss";
 import * as serverConnection from "./server-connection";
 import * as speech from "./speech";

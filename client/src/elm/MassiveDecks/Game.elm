@@ -61,7 +61,7 @@ import MassiveDecks.Util.NeList as NeList
 import Ui.Button as Button
 import Ui.Card as Card
 import Ui.IconButton as IconButton
-import Material.LinearProgress as LinearProgress
+import Ui.LinearProgress as LinearProgress
 import Set exposing (Set)
 import Task
 

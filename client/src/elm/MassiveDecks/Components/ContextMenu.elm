@@ -16,8 +16,8 @@ import MassiveDecks.Strings exposing (MdString)
 import MassiveDecks.Strings.Languages as Lang
 import MassiveDecks.Util.Html as Html
 import MassiveDecks.Util.Html.Attributes as HtmlA
-import Material.ListView as ListView
-import Material.Menu as Menu
+import Ui.ListView as ListView
+import Ui.Menu as Menu
 
 
 {-| Toggle the state of a menu.

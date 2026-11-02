@@ -23,7 +23,7 @@ import MassiveDecks.Pages.Lobby.GameCode exposing (GameCode)
 import MassiveDecks.Pages.Lobby.Route exposing (..)
 import MassiveDecks.Pages.Lobby.Spectate.Model as Spectate
 import MassiveDecks.User as User exposing (User)
-import Material.Menu as Menu
+import Ui.Menu as Menu
 
 
 {-| A change. This is the result of the update function, and implies either an update to the current page or a redirect

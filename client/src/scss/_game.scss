@@ -26,11 +26,6 @@
 
     z-index: 999;
 
-    --mdc-typography-button-font-family: #{fonts.$general};
-    --mdc-typography-button-font-weight: 800;
-    --mdc-typography-button-letter-spacing: 0.02em;
-    --mdc-typography-button-text-transform: none;
-    --mdc-typography-button-font-size: 1rem;
   }
 
   // On phones the labelled main action sits centred at the bottom, in easy reach of either thumb.
@@ -49,9 +44,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  font-family: fonts.$display;
   font-size: 3em;
   margin: 1em;
   text-align: center;
+
+  .svg-inline--fa {
+    color: colors.$secondary;
+  }
 
   span {
     margin-top: 1em;
@@ -94,7 +94,6 @@
   #timer {
     flex-shrink: 0;
     height: 4px;
-    --mdc-linear-progress-buffer-color: #{colors.$error};
   }
 
   .top-row {
@@ -426,9 +425,27 @@ ol.card-set {
         min-width: 0;
       }
 
+      // The player's name (and trophy, votes) above their play, in the flow instead of floating above it.
       .with-byline {
         margin: 0;
         align-items: stretch;
+
+        > .play,
+        > .game-card {
+          margin-top: 0;
+        }
+
+        .byline {
+          position: static;
+          justify-content: flex-start;
+          margin: 0 0 0.3rem 0.25rem;
+          font-size: 0.9375rem;
+          color: colors.$text-muted;
+
+          > span:first-child {
+            margin-left: 0;
+          }
+        }
       }
 
       ol.card-set {
@@ -455,6 +472,17 @@ ol.card-set {
           .side.front {
             position: relative;
             min-height: 4rem;
+          }
+        }
+
+        // Face down: the back's "Massive Decks" is sized for full cards.
+        .side.back {
+          display: flex;
+          align-items: center;
+
+          .content p {
+            font-size: 1.125rem;
+            line-height: 1.1;
           }
         }
 

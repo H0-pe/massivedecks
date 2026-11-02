@@ -65,7 +65,7 @@ import MassiveDecks.Util.NeList as NeList
 import Ui.Button as Button
 import Ui.Card as Card
 import Ui.IconButton as IconButton
-import Material.Menu as Menu
+import Ui.Menu as Menu
 
 
 changeRoute : Shared -> Route -> Model -> Route.Fork ( Model, Cmd msg )

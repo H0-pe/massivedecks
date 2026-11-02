@@ -190,39 +190,38 @@
   }
 }
 
+// A small pill in the corner linking to Many Decks.
 #many-decks-ad > div {
-  font-size: clamp(0.9rem, 3vw, 1.2rem);
+  font-size: 0.875rem;
+  font-weight: 800;
 
   position: fixed;
-  left: 0;
-  top: -6.5em;
+  left: 1rem;
+  top: 1rem;
 
   z-index: 11;
 
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: row-reverse;
   align-items: center;
-  text-align: center;
-  justify-content: flex-start;
+  gap: 0.5em;
 
-  width: 7em;
-  height: 10em;
-  border-radius: 7em;
+  padding: 0.5em 0.9em;
+  border-radius: 999px;
 
-  transition: left 0.25s, top 0.25s;
+  transition: border-color 0.15s;
 
   background-color: colors.$surface-raised;
   color: colors.$text;
   border: 1px solid colors.$line-strong;
 
-  > * {
-    margin-bottom: 0.5em;
-  }
-
   &:hover {
-    left: 0em;
-    top: -5.5em;
+    border-color: colors.$text-muted;
   }
+}
+
+#many-decks-ad {
+  background: none;
 }
 
 @keyframes sway {

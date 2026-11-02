@@ -10,7 +10,7 @@ import MassiveDecks.Pages.Lobby.Model exposing (..)
 import MassiveDecks.Pages.Lobby.Route exposing (Section)
 import MassiveDecks.Pages.Lobby.Spectate.Messages as Spectate
 import MassiveDecks.User as User
-import Material.Menu as Menu
+import Ui.Menu as Menu
 
 
 type Msg

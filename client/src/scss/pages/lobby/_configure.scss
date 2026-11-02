@@ -37,12 +37,6 @@
     margin: 0.5em 0 0 0;
   }
 
-  .multipart {
-    mdc-switch {
-      margin-right: 0.5em;
-    }
-  }
-
   .actions {
     display: flex;
     flex-direction: column-reverse;
@@ -157,7 +151,8 @@
 
 // The source and deck pickers share the row with the add button. The class sits on the inner select, so size the
 // field around it.
-#add-deck .multipart > .ui-field {
+#add-deck .multipart > .ui-field,
+#add-deck .multipart > md-select {
   flex: 1 1 1em;
   min-width: 0;
 }
